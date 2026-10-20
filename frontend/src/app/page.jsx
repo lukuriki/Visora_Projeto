@@ -1,40 +1,677 @@
-import styles from "./page.module.css";
 
-export default function Home() {
-  const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080/api";
+"use client";
+
+import { useEffect, useState } from "react";
+import { motion } from "framer-motion";
+import {
+  ArrowRight,
+  BarChart3,
+  Brain,
+  Eye,
+  Sparkles,
+  TrendingUp,
+  Zap,
+  Moon,
+  Sun,
+} from "lucide-react";
+
+import Testemunhos from "../components/testemunhos";
+import FAQ from "@/components/blocks/faq_accordion";
+
+export default function VisoraPage() {
+  const [darkMode, setDarkMode] = useState(false);
+  const [themeLoaded, setThemeLoaded] = useState(false);
+
+  useEffect(() => {
+    const savedTheme = localStorage.getItem("visora-theme");
+    setDarkMode(savedTheme === "dark");
+    setThemeLoaded(true);
+  }, []);
+
+  useEffect(() => {
+    if (!themeLoaded) return;
+
+    localStorage.setItem(
+      "visora-theme",
+      darkMode ? "dark" : "light"
+    );
+  }, [darkMode, themeLoaded]);
 
   return (
-    <div className={styles.page}>
-      <main className={styles.main}>
-        <section className={styles.hero}>
-          <p className={styles.kicker}>EXEMPLO ALTERAÇÂO</p>
-          <h1>Next.js, Express e MySQL</h1>
-          <p>
-            Base limpa para fork dos alunos, preparada para desenvolvimento
-            local e deploy com Docker no Coolify.
-          </p>
+    <div className={darkMode ? "dark" : ""}>
+      <main className="min-h-screen overflow-hidden bg-[#F2F2F2] text-[#273B31] transition-colors duration-500 dark:bg-[#111A14] dark:text-[#E5EDE5]">
+
+        {/* BOTÃO DE TEMA */}
+        <motion.button
+          type="button"
+          whileHover={{ scale: 1.08 }}
+          whileTap={{ scale: 0.92 }}
+          onClick={() => setDarkMode((current) => !current)}
+          aria-label={
+            darkMode ? "Ativar modo claro" : "Ativar modo escuro"
+          }
+          title={darkMode ? "Modo claro" : "Modo escuro"}
+          className="fixed right-5 top-5 z-[100] flex h-12 w-12 items-center justify-center rounded-full border border-[#A3B18A]/40 bg-white/90 text-[#344E41] shadow-lg backdrop-blur-xl transition-colors duration-300 dark:border-[#7E9971]/40 dark:bg-[#1C2920]/95 dark:text-[#C9D5B8] dark:hover:bg-[#293A2D]"
+        >
+          {darkMode ? <Sun size={21} /> : <Moon size={21} />}
+        </motion.button>
+
+        {/* ================= HERO ================= */}
+        <section className="relative flex min-h-[780px] items-center overflow-hidden bg-[#F2F2F2] px-6 py-20 transition-colors duration-500 dark:bg-[#111A14] lg:px-22">
+
+          {/* AURAS */}
+          <motion.div
+            animate={{
+              x: [0, 35, 0],
+              y: [0, 25, 0],
+              scale: [1, 1.08, 1],
+            }}
+            transition={{
+              duration: 10,
+              repeat: Infinity,
+              ease: "easeInOut",
+            }}
+            className="pointer-events-none absolute -left-40 -top-40 h-[620px] w-[620px] rounded-full bg-[#588157]/35 blur-[150px] dark:bg-[#588157]/25"
+          />
+
+          <motion.div
+            animate={{
+              x: [0, -30, 0],
+              y: [0, 30, 0],
+              scale: [1, 1.12, 1],
+            }}
+            transition={{
+              duration: 12,
+              repeat: Infinity,
+              ease: "easeInOut",
+            }}
+            className="pointer-events-none absolute -right-32 -top-20 h-[560px] w-[560px] rounded-full bg-[#7E9971]/45 blur-[140px] dark:bg-[#7E9971]/20"
+          />
+
+          <motion.div
+            animate={{
+              opacity: [0.15, 0.3, 0.15],
+              scale: [0.95, 1.08, 0.95],
+            }}
+            transition={{
+              duration: 8,
+              repeat: Infinity,
+              ease: "easeInOut",
+            }}
+            className="pointer-events-none absolute left-[38%] top-[25%] h-[480px] w-[480px] rounded-full bg-[#588157]/25 blur-[150px] dark:bg-[#588157]/20"
+          />
+
+          <div className="pointer-events-none absolute -bottom-64 right-[8%] h-[550px] w-[550px] rounded-full bg-[#3A5A40]/30 blur-[150px] dark:bg-[#3A5A40]/25" />
+
+          <motion.div
+            animate={{
+              opacity: [0.25, 0.55, 0.25],
+              scale: [1, 1.2, 1],
+            }}
+            transition={{
+              duration: 5,
+              repeat: Infinity,
+              ease: "easeInOut",
+            }}
+            className="pointer-events-none absolute left-[52%] top-[18%] h-32 w-32 rounded-full bg-[#A3B18A]/50 blur-[70px]"
+          />
+
+          {/* GRID */}
+          <div
+            className="pointer-events-none absolute inset-0 opacity-[0.35] dark:opacity-[0.15]"
+            style={{
+              backgroundImage:
+                "linear-gradient(#58815715 1px, transparent 1px), linear-gradient(90deg, #58815715 1px, transparent 1px)",
+              backgroundSize: "70px 70px",
+              maskImage:
+                "linear-gradient(to bottom, black, transparent 80%)",
+            }}
+          />
+
+          <div className="relative z-10 mx-auto grid w-full items-center justify-between gap-16 lg:grid-cols-2">
+
+            {/* TEXTO */}
+            <motion.div
+              initial={{ opacity: 0, x: -40 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.8 }}
+            >
+              <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-[#A3B18A] bg-white/60 px-4 py-2 text-sm font-medium text-[#3A5A40] backdrop-blur-md dark:border-[#7E9971]/40 dark:bg-[#1C2920]/70 dark:text-[#C9D5B8]">
+                <Sparkles size={15} />
+                Inteligência para decisões mais estratégicas
+              </div>
+
+              <h1 className="max-w-3xl text-5xl font-bold leading-[1.05] tracking-tight text-[#273B31] dark:text-[#E5EDE5] md:text-6xl lg:text-7xl">
+                Transforme dados em{" "}
+                <span className="bg-gradient-to-r from-[#344E41] via-[#588157] to-[#7E9971] bg-clip-text text-transparent dark:from-[#C9D5B8] dark:via-[#8FB58B] dark:to-[#588157]">
+                  visão.
+                </span>
+              </h1>
+
+              <p className="mt-7 max-w-xl text-lg leading-8 text-[#3A5A40]/75 dark:text-[#C1CEC2]/80">
+                A Visora reúne informações, indicadores e insights em uma
+                plataforma inteligente para ajudar sua empresa a enxergar
+                oportunidades e tomar decisões melhores.
+              </p>
+
+              <div className="mt-9 flex flex-wrap gap-4">
+                <motion.a
+                  href="#sobre"
+                  whileHover={{ scale: 1.04 }}
+                  whileTap={{ scale: 0.97 }}
+                  className="group flex items-center gap-3 rounded-xl bg-[#3A5A40] px-6 py-3.5 font-semibold text-white shadow-[0_12px_35px_rgba(58,90,64,0.28)] transition-colors hover:bg-[#344E41] dark:bg-[#588157] dark:hover:bg-[#6C966B]"
+                >
+                  Conheça a Visora
+                  <ArrowRight
+                    size={18}
+                    className="transition-transform group-hover:translate-x-1"
+                  />
+                </motion.a>
+
+                <motion.a
+                  href="#diferenciais"
+                  whileHover={{ scale: 1.04 }}
+                  whileTap={{ scale: 0.97 }}
+                  className="rounded-xl border border-[#A3B18A] bg-white/60 px-6 py-3.5 font-semibold text-[#344E41] backdrop-blur-md transition-all hover:border-[#588157] hover:bg-white dark:border-[#7E9971]/50 dark:bg-[#1C2920]/70 dark:text-[#E5EDE5] dark:hover:bg-[#293A2D]"
+                >
+                  Ver diferenciais
+                </motion.a>
+              </div>
+
+              {/* ESTATÍSTICAS */}
+              <div className="mt-12 grid max-w-xl grid-cols-3 gap-5">
+                <div>
+                  <p className="text-2xl font-bold text-[#344E41] dark:text-[#C9D5B8]">
+                    01
+                  </p>
+                  <p className="mt-1 text-sm text-[#588157] dark:text-[#A3B18A]">
+                    Plataforma integrada
+                  </p>
+                </div>
+
+                <div>
+                  <p className="text-2xl font-bold text-[#344E41] dark:text-[#C9D5B8]">
+                    24/7
+                  </p>
+                  <p className="mt-1 text-sm text-[#588157] dark:text-[#A3B18A]">
+                    Dados acessíveis
+                  </p>
+                </div>
+
+                <div>
+                  <p className="text-2xl font-bold text-[#344E41] dark:text-[#C9D5B8]">
+                    100%
+                  </p>
+                  <p className="mt-1 text-sm text-[#588157] dark:text-[#A3B18A]">
+                    Visão centralizada
+                  </p>
+                </div>
+              </div>
+            </motion.div>
+
+            {/* DASHBOARD */}
+            <motion.div
+              initial={{ opacity: 0, x: 50 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.9, delay: 0.15 }}
+              className="relative"
+            >
+              <div className="pointer-events-none absolute left-1/2 top-1/2 h-[500px] w-[500px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#588157]/25 blur-[110px] dark:bg-[#588157]/20" />
+
+              <motion.div
+                animate={{ y: [0, -8, 0] }}
+                transition={{
+                  duration: 6,
+                  repeat: Infinity,
+                  ease: "easeInOut",
+                }}
+                className="relative z-10 rounded-[28px] border border-white/80 bg-white/75 p-4 shadow-[0_30px_80px_rgba(52,78,65,0.18)] backdrop-blur-xl dark:border-[#34483A] dark:bg-[#18241C]/90 dark:shadow-[0_30px_80px_rgba(0,0,0,0.25)]"
+              >
+                <div className="mb-4 flex items-center justify-between rounded-2xl bg-[#F2F2F2] p-4 dark:bg-[#111A14]">
+                  <div>
+                    <p className="text-xs text-[#588157]">VISORA</p>
+                    <h3 className="font-semibold text-[#344E41] dark:text-[#E5EDE5]">
+                      Visão geral
+                    </h3>
+                  </div>
+
+                  <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#588157] text-white shadow-lg shadow-[#588157]/25">
+                    <BarChart3 size={19} />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <DashboardCard
+                    icon={<TrendingUp size={18} />}
+                    title="Performance"
+                    value="+24,8%"
+                  />
+
+                  <DashboardCard
+                    icon={<Brain size={18} />}
+                    title="Insights"
+                    value="128"
+                  />
+                </div>
+
+                {/* GRÁFICO */}
+                <div className="mt-4 rounded-2xl border border-[#DAD7CD] bg-white p-5 dark:border-[#34483A] dark:bg-[#17231B]">
+                  <div className="mb-5 flex items-center justify-between">
+                    <div>
+                      <p className="text-xs text-[#7E9971]">
+                        DESEMPENHO
+                      </p>
+                      <p className="font-semibold text-[#344E41] dark:text-[#E5EDE5]">
+                        Indicadores
+                      </p>
+                    </div>
+
+                    <div className="rounded-lg bg-[#588157]/10 px-3 py-1.5 text-xs font-semibold text-[#588157] dark:bg-[#588157]/20 dark:text-[#A3B18A]">
+                      +18%
+                    </div>
+                  </div>
+
+                  <div className="flex h-36 items-end gap-3">
+                    {[45, 62, 52, 78, 67, 92, 82, 100].map(
+                      (height, index) => (
+                        <motion.div
+                          key={index}
+                          initial={{ height: 0 }}
+                          animate={{ height: `${height}%` }}
+                          transition={{
+                            duration: 0.8,
+                            delay: index * 0.08,
+                          }}
+                          className="flex-1 rounded-t-lg bg-gradient-to-t from-[#3A5A40] to-[#7E9971] dark:from-[#588157] dark:to-[#A3B18A]"
+                        />
+                      )
+                    )}
+                  </div>
+                </div>
+
+                <div className="mt-4 grid grid-cols-3 gap-3">
+                  <SmallStat title="Projetos" value="42" />
+                  <SmallStat title="Dados" value="8.4k" />
+                  <SmallStat title="Insights" value="128" />
+                </div>
+              </motion.div>
+
+              {/* NOTIFICAÇÃO FLUTUANTE */}
+              <motion.div
+                animate={{ y: [0, -8, 0] }}
+                transition={{
+                  duration: 4,
+                  repeat: Infinity,
+                  ease: "easeInOut",
+                }}
+                className="absolute -bottom-5 -left-3 z-20 flex items-center gap-3 rounded-2xl border border-[#A3B18A] bg-white/90 px-4 py-3 shadow-[0_15px_40px_rgba(58,90,64,0.18)] backdrop-blur-xl dark:border-[#34483A] dark:bg-[#1C2920]/95 dark:shadow-[0_15px_40px_rgba(0,0,0,0.25)] sm:-left-7"
+              >
+                <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#588157] text-white">
+                  <Zap size={17} />
+                </div>
+
+                <div>
+                  <p className="text-xs text-[#7E9971] dark:text-[#A3B18A]">
+                    Novo insight
+                  </p>
+                  <p className="text-sm font-semibold text-[#344E41] dark:text-[#E5EDE5]">
+                    Oportunidade identificada
+                  </p>
+                </div>
+              </motion.div>
+            </motion.div>
+          </div>
         </section>
 
-        <section className={styles.grid} aria-label="Stack do projeto">
-          <article>
-            <span>Frontend</span>
-            <strong>Next.js</strong>
-            <p>Sem Tailwind ou Bootstrap por padrao.</p>
-          </article>
-          <article>
-            <span>Backend</span>
-            <strong>Express</strong>
-            <p>API em JavaScript com dotenv, cors, helmet e mysql2.</p>
-          </article>
-          <article>
-            <span>Banco</span>
-            <strong>MySQL</strong>
-            <p>Container com script inicial em SQL.</p>
-          </article>
+        {/* ================= DIFERENCIAIS ================= */}
+        <section
+          id="diferenciais"
+          className="relative overflow-hidden bg-[#F2F2F2] px-6 py-28 transition-colors duration-500 dark:bg-[#111A14] lg:px-12"
+        >
+          <div className="pointer-events-none absolute left-1/2 top-1/2 h-[500px] w-[700px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#588157]/10 blur-[140px] dark:bg-[#588157]/10" />
+
+          <div className="relative z-10 mx-auto max-w-7xl">
+            <motion.div
+              initial={{ opacity: 0, y: 25 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6 }}
+              className="mx-auto mb-16 max-w-2xl text-center"
+            >
+              <span className="rounded-full border border-[#588157]/20 bg-[#588157]/10 px-5 py-2 text-sm font-semibold uppercase tracking-[0.2em] text-[#588157] dark:border-[#7E9971]/30 dark:bg-[#588157]/15 dark:text-[#A3B18A]">
+                Diferenciais
+              </span>
+
+              <h2 className="mt-6 text-4xl font-bold tracking-tight text-[#273B31] dark:text-[#E5EDE5] md:text-5xl">
+                Tudo o que você precisa para{" "}
+                <span className="text-[#588157] dark:text-[#A3B18A]">
+                  enxergar melhor.
+                </span>
+              </h2>
+
+              <p className="mt-5 leading-7 text-[#3A5A40]/70 dark:text-[#C1CEC2]/75">
+                Uma experiência criada para transformar informações
+                complexas em decisões mais simples, rápidas e estratégicas.
+              </p>
+            </motion.div>
+
+            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+              <FeatureCard
+                icon={<Eye size={23} />}
+                number="01"
+                title="Visão centralizada"
+                description="Tenha os principais dados da sua operação reunidos em um único ambiente."
+              />
+
+              <FeatureCard
+                icon={<Brain size={23} />}
+                number="02"
+                title="Insights inteligentes"
+                description="Identifique padrões, oportunidades e informações relevantes com mais facilidade."
+              />
+
+              <FeatureCard
+                icon={<BarChart3 size={23} />}
+                number="03"
+                title="Dados visuais"
+                description="Transforme números complexos em gráficos e indicadores fáceis de interpretar."
+              />
+
+              <FeatureCard
+                icon={<Zap size={23} />}
+                number="04"
+                title="Decisões mais rápidas"
+                description="Acesse as informações certas no momento certo para agir com confiança."
+              />
+            </div>
+          </div>
         </section>
 
-        <p className={styles.api}>API configurada: {apiUrl}</p>
+        {/* ================= SOBRE A VISORA ================= */}
+        <section
+          id="sobre"
+          className="relative overflow-hidden bg-[#344E41] px-6 py-24 text-[#F2F2F2] transition-colors duration-500 dark:bg-[#17271D] lg:px-12 lg:py-32"
+        >
+          <motion.div
+            animate={{
+              x: [0, 25, 0],
+              y: [0, -20, 0],
+              scale: [1, 1.08, 1],
+            }}
+            transition={{
+              duration: 10,
+              repeat: Infinity,
+              ease: "easeInOut",
+            }}
+            className="pointer-events-none absolute -left-40 top-10 h-[450px] w-[450px] rounded-full bg-[#A3B18A]/25 blur-[80px]"
+          />
+
+          <motion.div
+            animate={{
+              x: [0, -20, 0],
+              y: [0, 25, 0],
+              scale: [1, 1.1, 1],
+            }}
+            transition={{
+              duration: 12,
+              repeat: Infinity,
+              ease: "easeInOut",
+            }}
+            className="pointer-events-none absolute -right-32 bottom-0 h-[500px] w-[500px] rounded-full bg-[#7E9971]/30 blur-[140px]"
+          />
+
+          <motion.div
+            animate={{
+              opacity: [0.1, 0.22, 0.1],
+              scale: [1, 1.1, 1],
+            }}
+            transition={{
+              duration: 9,
+              repeat: Infinity,
+              ease: "easeInOut",
+            }}
+            className="pointer-events-none absolute left-[40%] top-[25%] h-[400px] w-[400px] rounded-full bg-[#588157]/25 blur-[130px]"
+          />
+
+          <div className="relative z-10 mx-auto grid max-w-7xl items-center gap-14 lg:grid-cols-2 lg:gap-20">
+
+            {/* IMAGEM */}
+            <motion.div
+              initial={{ opacity: 0, x: -35 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true, amount: 0.2 }}
+              transition={{ duration: 0.8 }}
+              className="relative"
+            >
+              <div className="pointer-events-none absolute -inset-5 rounded-[36px] bg-[#A3B18A]/20 blur-2xl" />
+
+              <div className="relative overflow-hidden rounded-[28px] border border-[#A3B18A]/20 bg-[#273B31] p-2 shadow-[0_25px_70px_rgba(0,0,0,0.25)] dark:bg-[#111A14]">
+                <img
+                  src="/visoraequipe.png"
+                  alt="Profissionais conversando em frente a um computador"
+                  className="h-[360px] w-full rounded-[22px] object-cover object-center sm:h-[440px] lg:h-[500px]"
+                />
+
+                <div className="pointer-events-none absolute inset-x-2 bottom-2 h-32 rounded-b-[22px] bg-gradient-to-t from-[#1B3327]/90 to-transparent" />
+
+                <div className="absolute bottom-7 left-7 flex items-center gap-3">
+                  <div className="flex h-11 w-11 items-center justify-center rounded-xl border border-white/30 bg-white/15 text-white backdrop-blur-md">
+                    <Eye size={22} />
+                  </div>
+
+                  <div>
+                    <p className="text-sm font-bold tracking-wider text-white">
+                      VISORA
+                    </p>
+                    <p className="text-xs text-[#E1E8D8]">
+                      Enxergue novas possibilidades
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              {/* CARD FLUTUANTE */}
+              <motion.div
+                animate={{ y: [0, -7, 0] }}
+                transition={{
+                  duration: 4,
+                  repeat: Infinity,
+                  ease: "easeInOut",
+                }}
+                className="absolute -bottom-6 -right-3 flex items-center gap-3 rounded-2xl border border-[#A3B18A]/30 bg-[#273B31]/95 p-4 shadow-[0_15px_40px_rgba(0,0,0,0.25)] backdrop-blur-xl dark:bg-[#111A14]/95 sm:-right-6"
+              >
+                <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-[#A3B18A]/15 text-[#C9D5B8]">
+                  <Brain size={22} />
+                </div>
+
+                <div>
+                  <p className="text-xs text-[#A3B18A]">
+                    Inteligência aplicada
+                  </p>
+                  <p className="text-sm font-bold text-white">
+                    Dados que fazem sentido
+                  </p>
+                </div>
+              </motion.div>
+            </motion.div>
+
+            {/* TEXTO */}
+            <motion.div
+              initial={{ opacity: 0, x: 35 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true, amount: 0.2 }}
+              transition={{ duration: 0.8, delay: 0.1 }}
+              className="pt-4 lg:pt-0"
+            >
+              <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-[#A3B18A]/35 bg-[#A3B18A]/10 px-4 py-2 text-sm font-semibold text-[#C9D5B8] backdrop-blur-md">
+                <Sparkles size={16} />
+                Conheça a Visora
+              </div>
+
+              <h2 className="max-w-xl text-4xl font-bold leading-tight tracking-tight text-white sm:text-5xl lg:text-6xl">
+                Mais clareza para
+                <span className="mt-1 block bg-gradient-to-r from-[#DCE6D1] via-[#A3B18A] to-[#7E9971] bg-clip-text text-transparent">
+                  enxergar o futuro.
+                </span>
+              </h2>
+
+              <p className="mt-7 max-w-xl text-base leading-8 text-[#E0E7DC]/90 sm:text-lg">
+                A Visora transforma dados em informações visuais e insights
+                relevantes, conectando tecnologia e estratégia para facilitar
+                a compreensão dos resultados da sua empresa.
+              </p>
+
+              <p className="mt-4 max-w-xl text-base leading-8 text-[#D0DCCB]/80">
+                Acreditamos que decisões melhores começam com uma visão mais
+                clara. Por isso, reunimos informações importantes em uma
+                experiência intuitiva, organizada e inteligente.
+              </p>
+
+              <div className="mt-8 space-y-5">
+                <AboutItem
+                  icon={<Eye size={16} />}
+                  title="Informações em um só lugar"
+                  description="Visualize os indicadores mais importantes com facilidade."
+                />
+
+                <AboutItem
+                  icon={<TrendingUp size={16} />}
+                  title="Estratégia baseada em dados"
+                  description="Identifique tendências e oportunidades para sua empresa."
+                />
+
+                <AboutItem
+                  icon={<Zap size={16} />}
+                  title="Mais agilidade nas decisões"
+                  description="Transforme informações complexas em ações mais claras."
+                />
+              </div>
+
+              <motion.a
+                href="#diferenciais"
+                whileHover={{ scale: 1.03 }}
+                whileTap={{ scale: 0.98 }}
+                className="group mt-9 inline-flex items-center gap-3 rounded-xl bg-[#A3B18A] px-6 py-3.5 font-semibold text-[#273B31] shadow-[0_12px_30px_rgba(0,0,0,0.15)] transition-colors hover:bg-[#C9D5B8]"
+              >
+                Descubra mais sobre nós
+                <ArrowRight
+                  size={18}
+                  className="transition-transform group-hover:translate-x-1"
+                />
+              </motion.a>
+            </motion.div>
+          </div>
+        </section>
+
+        {/* ================= TESTEMUNHOS ================= */}
+        <Testemunhos />
+
+        {/* ================= FAQ ================= */}
+        <FAQ />
+
       </main>
+    </div>
+  );
+}
+
+/* ================= CARD DO DASHBOARD ================= */
+function DashboardCard({ icon, title, value }) {
+  return (
+    <motion.div
+      whileHover={{ y: -4 }}
+      className="group rounded-2xl border border-[#DAD7CD] bg-white p-4 transition-all duration-300 hover:border-[#7E9971] hover:shadow-[0_15px_35px_rgba(88,129,87,0.15)] dark:border-[#34483A] dark:bg-[#1C2920] dark:hover:border-[#7E9971]"
+    >
+      <div className="mb-4 flex items-center justify-between">
+        <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#588157]/10 text-[#588157] transition-all duration-300 group-hover:bg-[#588157] group-hover:text-white">
+          {icon}
+        </div>
+
+        <TrendingUp size={15} className="text-[#A3B18A]" />
+      </div>
+
+      <p className="text-xs text-[#7E9971] dark:text-[#A3B18A]">
+        {title}
+      </p>
+
+      <p className="mt-1 text-2xl font-bold text-[#344E41] dark:text-[#E5EDE5]">
+        {value}
+      </p>
+    </motion.div>
+  );
+}
+
+/* ================= ESTATÍSTICAS ================= */
+function SmallStat({ title, value }) {
+  return (
+    <div className="rounded-xl bg-[#F2F2F2] p-3 dark:bg-[#111A14]">
+      <p className="text-[10px] uppercase tracking-wide text-[#7E9971] dark:text-[#A3B18A]">
+        {title}
+      </p>
+
+      <p className="mt-1 font-bold text-[#344E41] dark:text-[#E5EDE5]">
+        {value}
+      </p>
+    </div>
+  );
+}
+
+/* ================= CARDS DE DIFERENCIAIS ================= */
+function FeatureCard({ icon, number, title, description }) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 30 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+      whileHover={{ y: -10, transition: { duration: 0.25 } }}
+      className="group relative overflow-hidden rounded-[28px] border border-[#DAD7CD] bg-white p-7 shadow-sm transition-all duration-500 hover:border-[#588157] hover:shadow-[0_25px_60px_rgba(58,90,64,0.16)] dark:border-[#34483A] dark:bg-[#1C2920] dark:hover:border-[#7E9971]"
+    >
+      <div className="pointer-events-none absolute -right-20 -top-20 h-48 w-48 rounded-full bg-[#588157]/0 blur-[70px] transition-all duration-700 group-hover:bg-[#588157]/25" />
+
+      <div className="absolute left-0 top-0 h-full w-1 bg-gradient-to-b from-[#7E9971] via-[#588157] to-[#3A5A40] opacity-0 transition-all duration-500 group-hover:opacity-100" />
+
+      <div className="relative z-10 flex items-center justify-between">
+        <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#588157]/10 text-[#588157] transition-all duration-500 group-hover:bg-[#588157] group-hover:text-white group-hover:shadow-[0_10px_25px_rgba(88,129,87,0.3)] dark:bg-[#588157]/20 dark:text-[#A3B18A] dark:group-hover:text-white">
+          {icon}
+        </div>
+
+        <span className="text-sm font-semibold text-[#A3B18A] transition-colors group-hover:text-[#588157] dark:group-hover:text-[#C9D5B8]">
+          {number}
+        </span>
+      </div>
+
+      <div className="relative z-10 mt-7">
+        <h3 className="text-xl font-bold text-[#344E41] dark:text-[#E5EDE5]">
+          {title}
+        </h3>
+
+        <p className="mt-3 text-sm leading-6 text-[#3A5A40]/70 dark:text-[#C1CEC2]/80">
+          {description}
+        </p>
+      </div>
+
+      <div className="relative z-10 mt-7 flex items-center gap-2 text-sm font-semibold text-[#588157] opacity-0 transition-all duration-500 group-hover:translate-x-1 group-hover:opacity-100 dark:text-[#A3B18A]">
+        Explorar
+        <ArrowRight size={16} />
+      </div>
+    </motion.div>
+  );
+}
+
+/* ================= ITENS DA APRESENTAÇÃO ================= */
+function AboutItem({ icon, title, description }) {
+  return (
+    <div className="flex items-start gap-3">
+      <div className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-[#A3B18A]/20 bg-[#A3B18A]/15 text-[#C9D5B8]">
+        {icon}
+      </div>
+
+      <div>
+        <p className="font-semibold text-white">{title}</p>
+
+        <p className="mt-1 text-sm leading-6 text-[#D0DCCB]/80">
+          {description}
+        </p>
+      </div>
     </div>
   );
 }
