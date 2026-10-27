@@ -8,7 +8,7 @@ const montserrat = Montserrat({
 });
 
 export const metadata = {
-  title: "Projeto Base",
+  title: "Visora",
   description: "Template base com Next.js, Express e MySQL",
 };
 

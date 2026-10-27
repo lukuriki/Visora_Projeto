@@ -1,6 +1,10 @@
-CREATE DATABASE IF NOT EXISTS app_db;
+SET NAMES utf8mb4;
 
-USE app_db;
+CREATE DATABASE IF NOT EXISTS visora_db
+  DEFAULT CHARACTER SET utf8mb4
+  COLLATE utf8mb4_unicode_ci;
+
+USE visora_db;
 
 CREATE TABLE IF NOT EXISTS health_checks (
   id INT AUTO_INCREMENT PRIMARY KEY,
