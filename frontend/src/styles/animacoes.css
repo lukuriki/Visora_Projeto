@@ -1,0 +1,21 @@
+
+@import "tailwindcss";
+
+@keyframes marquee { to { transform: translateX(-50%); } }
+@keyframes flutuar { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-12px); } }
+@keyframes deriva { 0%, 100% { transform: translate(0, 0) scale(1); } 50% { transform: translate(50px, 35px) scale(1.12); } }
+@keyframes gradiente { 0%, 100% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } }
+@keyframes pulso { 0% { box-shadow: 0 0 0 0 rgba(163,177,138,.55); } 100% { box-shadow: 0 0 0 18px rgba(163,177,138,0); } }
+@keyframes brilho { to { transform: translateX(250%) skewX(-20deg); } }
+.marquee { animation: marquee 45s linear infinite; }
+.marquee-rapido { animation: marquee 28s linear infinite; }
+.marquee:hover, .marquee-rapido:hover { animation-play-state: paused; }
+.flutuar { animation: flutuar 6s ease-in-out infinite; }
+.flutuar-inverso { animation: flutuar 4.5s ease-in-out infinite reverse; }
+.deriva { animation: deriva 14s ease-in-out infinite; }
+.gradiente-animado { background-size: 220% 220%; animation: gradiente 10s ease infinite; }
+.pulso { animation: pulso 2s ease-out infinite; }
+.brilho::after { content: ""; position: absolute; inset: 0; width: 40%; left: -60%; background: linear-gradient(90deg, transparent, rgba(255,255,255,.45), transparent); transform: skewX(-20deg); animation: brilho 3.5s ease-in-out infinite; }
+@media (prefers-reduced-motion: reduce) {
+  .marquee, .marquee-rapido, .flutuar, .flutuar-inverso, .deriva, .gradiente-animado, .pulso, .brilho::after { animation: none !important; }
+}
