@@ -1,0 +1,15 @@
+
+.home {
+  --home-bg: #F2F2F2;
+  --home-text: #273B31;
+
+  background-color: var(--home-bg);
+  color: var(--home-text);
+
+  transition: background-color 0.5s ease, color 0.5s ease;
+}
+
+.dark .home {
+  --home-bg: #111A14;
+  --home-text: #E5EDE5;
+}
