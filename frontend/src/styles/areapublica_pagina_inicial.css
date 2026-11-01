@@ -1,3 +1,6 @@
+htlm {
+  scroll-behavior: smooth;
+}
 
 .home {
   --home-bg: #F2F2F2;
