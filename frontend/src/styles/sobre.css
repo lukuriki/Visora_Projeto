@@ -1,0 +1,123 @@
+/* Tokens da página "Sobre nós".
+   Todas as cores vêm daqui: para mudar a identidade, edite só este bloco.
+   O modo escuro usa a classe "dark" no <html> (a mesma do footer e do shadcn). */
+
+.sobre {
+  --sb-bg: #f2f2f2;
+  --sb-fg: #1d2b22;
+  --sb-muted: #56665b;
+  --sb-brand: #344e41;
+  --sb-brand-hover: #456746;
+  --sb-on-brand: #f2f2f2;
+  --sb-accent: #588157;
+  --sb-accent-text: #456746;
+  --sb-line: rgba(52, 78, 65, 0.16);
+  --sb-glass: rgba(242, 242, 242, 0.78);
+  --sb-panel: rgba(255, 255, 255, 0.7);
+  --sb-hover: rgba(88, 129, 87, 0.14);
+  --sb-luz: rgba(88, 129, 87, 0.22);
+
+  background: var(--sb-bg);
+  color: var(--sb-fg);
+  transition: background-color 0.4s ease, color 0.4s ease;
+}
+
+.dark .sobre {
+  --sb-bg: #111a14;
+  --sb-fg: #e5ede5;
+  --sb-muted: #b1beb2;
+  --sb-brand: #a3b18a;
+  --sb-brand-hover: #c5d2b5;
+  --sb-on-brand: #17231b;
+  --sb-accent: #7e9971;
+  --sb-accent-text: #a3b18a;
+  --sb-line: rgba(163, 177, 138, 0.18);
+  --sb-glass: rgba(17, 26, 20, 0.72);
+  --sb-panel: rgba(28, 41, 32, 0.62);
+  --sb-hover: rgba(163, 177, 138, 0.14);
+  --sb-luz: rgba(88, 129, 87, 0.3);
+}
+
+/* Foco visível em tudo que é clicável */
+.sobre :focus-visible {
+  outline: 2px solid var(--sb-accent-text);
+  outline-offset: 3px;
+  border-radius: 6px;
+}
+
+/* Rolagem suave para as âncoras (#essencia, #valores...) */
+html:has(.sobre) {
+  scroll-behavior: smooth;
+}
+
+/* Fundo do hero: grade de pontos que some nas bordas + uma luz suave */
+.sb-grade {
+  background-image: radial-gradient(var(--sb-line) 1px, transparent 1px);
+  background-size: 28px 28px;
+  -webkit-mask-image: radial-gradient(ellipse 70% 65% at 72% 38%, #000 25%, transparent 78%);
+  mask-image: radial-gradient(ellipse 70% 65% at 72% 38%, #000 25%, transparent 78%);
+}
+
+.sb-linhas {
+  -webkit-mask-image: linear-gradient(to right, transparent 0%, #000 40%);
+  mask-image: linear-gradient(to right, transparent 0%, #000 40%);
+}
+
+.sb-linhas svg {
+  filter: drop-shadow(0 0 4px var(--sb-luz));
+}
+
+.sb-linhas-essencia {
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 8%, #000 92%, transparent 100%);
+  mask-image: linear-gradient(to bottom, transparent 0%, #000 8%, #000 92%, transparent 100%);
+}
+
+.sb-fluxo {
+  stroke-dasharray: 140 1100;
+  animation: sb-fluxo var(--dur, 14s) linear infinite;
+}
+
+@keyframes sb-fluxo {
+  to {
+    stroke-dashoffset: -1240;
+  }
+}
+
+.sb-luz {
+  background: radial-gradient(640px circle at 74% 34%, var(--sb-luz), transparent 66%);
+}
+
+/* Bloco final: o brilho acompanha o mouse (--mx / --my vêm do JS) */
+.sb-cta {
+  --mx: 72%;
+  --my: 28%;
+  background: linear-gradient(135deg, #344e41 0%, #3a5a40 100%);
+  color: #f2f2f2;
+}
+
+.dark .sobre .sb-cta {
+  background: linear-gradient(135deg, #1c2920 0%, #22332a 100%);
+  border: 1px solid rgba(163, 177, 138, 0.18);
+}
+
+.sb-cta-luz {
+  background: radial-gradient(
+    420px circle at var(--mx) var(--my),
+    rgba(163, 177, 138, 0.3),
+    transparent 62%
+  );
+}
+
+/* ... seu CSS anterior inteiro se mantém igual até a última parte ... */
+
+@media (prefers-reduced-motion: reduce) {
+  html:has(.sobre) {
+    scroll-behavior: auto;
+  }
+  
+  .sobre *, .sb-fluxo {
+    /* Garante que absolutamente nenhuma transição ou animação ocorra */
+    animation: none !important;
+    transition: none !important;
+  }
+}
