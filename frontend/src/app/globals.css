@@ -1,0 +1,131 @@
+
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme inline {
+  --font-heading: var(--font-montserrat);
+  --font-sans: var(--font-montserrat);
+
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+  --radius-3xl: calc(var(--radius) * 2.2);
+  --radius-4xl: calc(var(--radius) * 2.6);
+}
+
+:root {
+  color-scheme: light;
+
+  --radius: 0.625rem;
+
+  /* Fundo e textos */
+  --background: #F2F2F2;
+  --foreground: #273B31;
+
+  /* Cards */
+  --card: #FFFFFF;
+  --card-foreground: #273B31;
+
+  /* Menus e popovers */
+  --popover: #FFFFFF;
+  --popover-foreground: #273B31;
+
+  /* Cores principais */
+  --primary: #3A5A40;
+  --primary-foreground: #FFFFFF;
+
+  --secondary: #DAD7CD;
+  --secondary-foreground: #273B31;
+
+  --muted: #E8E9E3;
+  --muted-foreground: #555B56;
+
+  --accent: #A3B18A;
+  --accent-foreground: #273B31;
+
+  --destructive: #DC2626;
+
+  /* Bordas e campos */
+  --border: #DAD7CD;
+  --input: #DAD7CD;
+  --ring: #588157;
+}
+
+.dark {
+  color-scheme: dark;
+
+  /* Fundo e textos */
+  --background: #111A14;
+  --foreground: #E5EDE5;
+
+  /* Cards */
+  --card: #1C2920;
+  --card-foreground: #E5EDE5;
+
+  /* Menus e popovers */
+  --popover: #1C2920;
+  --popover-foreground: #E5EDE5;
+
+  /* Cores principais */
+  --primary: #588157;
+  --primary-foreground: #FFFFFF;
+
+  --secondary: #344E41;
+  --secondary-foreground: #E5EDE5;
+
+  --muted: #273B31;
+  --muted-foreground: #C1CEC2;
+
+  --accent: #3A5A40;
+  --accent-foreground: #E5EDE5;
+
+  --destructive: #F87171;
+
+  /* Bordas e campos */
+  --border: #344E41;
+  --input: #344E41;
+  --ring: #A3B18A;
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+  }
+
+  html {
+    @apply font-sans;
+  }
+}
