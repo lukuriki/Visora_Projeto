@@ -286,7 +286,7 @@ function ConteudoPagamento() {
 
   const [contratacao, setContratacao] = useState(null);
   const [resumoFinal, setResumoFinal] = useState(null);
-  const [copiado, setCopiado] = useState(false);
+  const [copiado, setCopiado] = useState("");
   const [simulando, setSimulando] = useState(false);
 
   // Verifica a aprovação do pagamento a cada 4 segundos.
@@ -491,11 +491,14 @@ function ConteudoPagamento() {
     }
   }
 
-  async function copiarCodigoPix() {
+  async function copiarCodigo(texto, tipo) {
+    if (!texto) return;
+
     try {
-      await navigator.clipboard.writeText(contratacao.pix.copiaECola);
-      setCopiado(true);
-      setTimeout(() => setCopiado(false), 2000);
+      await navigator.clipboard.writeText(texto);
+      setCopiado(tipo);
+      setErroCadastro("");
+      setTimeout(() => setCopiado(""), 2000);
     } catch {
       setErroCadastro(
         "Não foi possível copiar. Selecione o código e copie manualmente."
@@ -559,7 +562,7 @@ function ConteudoPagamento() {
 
   const resumo = [
     ["Plano", nomePlano],
-    ["Valor mensal", `${precoFormatado} / mês`],
+    ["Valor do plano", precoFormatado],
     ["Nome", dadosCadastro.nomeCompleto],
     ["E-mail pessoal", dadosCadastro.emailPessoal],
     ["Empresa", dadosCadastro.nomeEmpresa],
@@ -1004,28 +1007,134 @@ function ConteudoPagamento() {
 
                       <button
                         type="button"
-                        onClick={copiarCodigoPix}
+                        onClick={() => copiarCodigo(contratacao.pix.copiaECola, "pix")}
                         className={`${botaoPrimario} mt-3`}
                       >
-                        {copiado ? "Copiado!" : "Copiar código Pix"}
+                        {copiado === "pix" ? "Copiado!" : "Copiar código Pix"}
                       </button>
                     </div>
                   )}
 
-                  {contratacao.urlPagamento && (
-                    <a
-                      href={contratacao.urlPagamento}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className={`${botaoPrimario} mt-6 inline-block`}
-                    >
-                      {contratacao.metodo === "boleto"
-                        ? "Ver boleto"
-                        : contratacao.metodo === "pix"
-                          ? "Abrir fatura"
-                          : "Pagar com cartão"}
-                    </a>
-                  )}
+
+{/* PAGAMENTO POR BOLETO */}
+{contratacao.boleto && (
+  <div className="mt-6 rounded-2xl bg-[#E6E5E0]/80 p-5 text-left dark:bg-[#344E41]/80">
+
+    <h3 className="text-center text-lg font-semibold">
+      Pagamento por boleto bancário
+    </h3>
+
+    <p className={`mt-2 text-center text-sm ${textoSuave}`}>
+      Utilize a linha digitável ou abra o boleto
+      para realizar o pagamento.
+    </p>
+
+    {/* LINHA DIGITÁVEL */}
+    {contratacao.boleto.linhaDigitavel && (
+      <div className="mt-5">
+
+        <label className={classeLabel}>
+          Linha digitável
+        </label>
+
+        <textarea
+          readOnly
+          rows={2}
+          value={contratacao.boleto.linhaDigitavel}
+          onFocus={(event) => event.target.select()}
+          className={`${classeInput} text-sm`}
+        />
+
+        <button
+          type="button"
+          onClick={() => copiarCodigo(
+            contratacao.boleto.linhaDigitavel,
+            "boleto"
+          )}
+          className={`${botaoPrimario} mt-3 w-full`}
+        >
+          {copiado === "boleto" ? "Código copiado!" : "Copiar linha digitável"}
+        </button>
+
+      </div>
+    )}
+
+    {/* CÓDIGO DE BARRAS */}
+    {contratacao.boleto.codigoBarras && (
+      <div className="mt-5">
+
+        <label className={classeLabel}>
+          Código de barras
+        </label>
+
+        <input
+          readOnly
+          value={contratacao.boleto.codigoBarras}
+          onFocus={(event) => event.target.select()}
+          className={classeInput}
+        />
+
+      </div>
+    )}
+
+    {/* VENCIMENTO */}
+    {contratacao.boleto.vencimento && (
+      <p className={`mt-4 text-center text-sm ${textoSuave}`}>
+        Vencimento: {formatarData(
+          `${contratacao.boleto.vencimento}T12:00:00`
+        )}
+      </p>
+    )}
+
+    {/* VISUALIZAR BOLETO */}
+    {(contratacao.boleto.url || contratacao.urlPagamento) && (
+      <a
+        href={contratacao.boleto.url || contratacao.urlPagamento}
+        target="_blank"
+        rel="noopener noreferrer"
+        className={`${botaoSecundario} mt-5 block text-center`}
+      >
+        Visualizar boleto
+      </a>
+    )}
+
+  </div>
+)}
+
+
+{/* PAGAMENTO COM CARTÃO */}
+{contratacao.cartao && (
+  <div className="mt-6 rounded-2xl bg-[#E6E5E0]/80 p-5 dark:bg-[#344E41]/80">
+
+    <CreditCard
+      size={40}
+      className="mx-auto text-[#588157]"
+    />
+
+    <h3 className="mt-4 text-lg font-semibold">
+      Pagamento com cartão de crédito
+    </h3>
+
+    <p className={`mt-2 text-sm ${textoSuave}`}>
+      Informe os dados do cartão na página segura
+      de pagamento do Asaas.
+    </p>
+
+    {(contratacao.cartao.urlPagamento || contratacao.urlPagamento) && (
+      <a
+        href={contratacao.cartao.urlPagamento || contratacao.urlPagamento}
+        target="_blank"
+        rel="noopener noreferrer"
+        className={`${botaoPrimario} mt-5 inline-block`}
+      >
+        Pagar com cartão
+      </a>
+    )}
+
+  </div>
+)}
+
+
 
                   {contratacao.modo === "simulado" && (
                     <div className="mt-6 rounded-2xl border border-dashed border-[#A3B18A] p-4">

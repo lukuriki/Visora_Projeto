@@ -1,21 +1,32 @@
 "use client";
 
-import FooterAreaPublica from "@/components/FooterAreaPublica";
-import HeaderAreaPublica from "@/components/HeaderAreaPublica";
+import {
+  SidebarProvider,
+  SidebarTrigger,
+  SidebarInset,
+} from "@/components/ui/sidebar";
 
-import { motion, useScroll, useSpring } from "framer-motion";
+import { AppSidebar } from "@/components/SidebarChat";
 
+export default function Teste() {
+  return (
+    <SidebarProvider>
+      <AppSidebar />
 
-export default function PlataformaPaginaPrevisao(){
-    const { scrollYProgress } = useScroll();
-    const progresso = useSpring(scrollYProgress, { stiffness: 120, damping: 25 });
+      <SidebarInset>
 
-    return(<>
-        <HeaderAreaPublica/>
-        
-        {/* BARRA DE PROGRESSO */}
-        <motion.div style={{ scaleX: progresso }} className="fixed inset-x-0 top-0 z-[60] h-1 origin-left bg-gradient-to-r from-[#588157] via-[#A3B18A] to-[#588157]"/>
-        
-        <FooterAreaPublica/>
-    </>);
+        <header className="flex h-16 items-center gap-2 px-4">
+          <SidebarTrigger />
+        </header>
+
+        <main className="p-4">
+          <h1>My Page Content</h1>
+          <p>
+            The sidebar should now work without crashing!
+          </p>
+        </main>
+
+      </SidebarInset>
+    </SidebarProvider>
+  );
 }
