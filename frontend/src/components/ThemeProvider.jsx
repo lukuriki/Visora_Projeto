@@ -15,44 +15,104 @@ export function ThemeProvider({ children }) {
   const [darkMode, setDarkMode] = useState(false);
   const [carregado, setCarregado] = useState(false);
 
+  // ==========================================
+  // CARREGAR TEMA INICIAL
+  // ==========================================
+
   useEffect(() => {
+    const root = document.documentElement;
+
     const temaSalvo = localStorage.getItem("visora-theme");
+
+    const prefereEscuro = window.matchMedia(
+      "(prefers-color-scheme: dark)"
+    ).matches;
 
     const temaInicial =
       temaSalvo === "dark" ||
-      (!temaSalvo &&
-        window.matchMedia("(prefers-color-scheme: dark)").matches);
+      (!temaSalvo && prefereEscuro);
+
+    root.classList.toggle("dark", temaInicial);
 
     setDarkMode(temaInicial);
-
-    document.documentElement.classList.toggle("dark", temaInicial);
-
     setCarregado(true);
   }, []);
 
+  // ==========================================
+  // ALTERNAR TEMA COM UM CLIQUE
+  // ==========================================
+
   const toggleTheme = useCallback(() => {
-    setDarkMode((atual) => {
-      const novoTema = !atual;
+    const root = document.documentElement;
 
-      document.documentElement.classList.toggle("dark", novoTema);
+    // Consulta o tema realmente aplicado no HTML.
+    const novoTema = !root.classList.contains("dark");
 
-      localStorage.setItem(
-        "visora-theme",
-        novoTema ? "dark" : "light"
-      );
+    // Atualiza o HTML imediatamente.
+    root.classList.toggle("dark", novoTema);
 
-      return novoTema;
-    });
+    // Salva a preferência do usuário.
+    localStorage.setItem(
+      "visora-theme",
+      novoTema ? "dark" : "light"
+    );
+
+    // Atualiza o estado do React.
+    setDarkMode(novoTema);
   }, []);
 
-  if (!carregado) return null;
+  // ==========================================
+  // SINCRONIZAR ALTERAÇÕES EXTERNAS
+  // ==========================================
+
+  useEffect(() => {
+    if (!carregado) return;
+
+    const root = document.documentElement;
+
+    const observer = new MutationObserver(() => {
+      const temaAtual = root.classList.contains("dark");
+
+      setDarkMode((anterior) =>
+        anterior === temaAtual ? anterior : temaAtual
+      );
+    });
+
+    observer.observe(root, {
+      attributes: true,
+      attributeFilter: ["class"],
+    });
+
+    return () => observer.disconnect();
+  }, [carregado]);
+
+  // ==========================================
+  // AGUARDAR CARREGAMENTO
+  // ==========================================
+
+  if (!carregado) {
+    return null;
+  }
+
+  // ==========================================
+  // PROVIDER
+  // ==========================================
 
   return (
-    <ThemeContext.Provider value={{ darkMode, toggleTheme }}>
+    <ThemeContext.Provider
+      value={{
+        darkMode,
+        toggleTheme,
+      }}
+    >
       {children}
     </ThemeContext.Provider>
   );
 }
+
+// ==========================================
+// HOOK PARA UTILIZAR O TEMA
+// ==========================================
 
 export function useTheme() {
   const contexto = useContext(ThemeContext);

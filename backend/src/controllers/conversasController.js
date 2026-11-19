@@ -133,27 +133,57 @@ export async function criarMensagemClienteController(req, res) {
 
 export async function responderConversaController(req, res) {
   try {
-    const { id } = req.params;
+    const conversaId = Number(req.params.id);
     const { mensagem } = req.body;
 
-    if (!mensagem || !mensagem.trim()) {
-      return res.status(400).json({mensagem: "Digite uma resposta."});
+    if (
+      !Number.isSafeInteger(conversaId) ||
+      conversaId <= 0
+    ) {
+      return res.status(400).json({
+        mensagem: "ID da conversa inválido.",
+      });
+    }
+
+    if (
+      typeof mensagem !== "string" ||
+      !mensagem.trim()
+    ) {
+      return res.status(400).json({
+        mensagem: "Digite uma resposta válida.",
+      });
     }
 
     const resultado = await responderConversa(
-      id,
+      conversaId,
       mensagem.trim()
     );
 
-    return res.status(200).json(resultado);
+    return res
+      .status(resultado.emailEnviado ? 200 : 502)
+      .json(resultado);
+
   } catch (erro) {
     console.error("Erro ao responder conversa:", erro);
 
     if (erro.message === "Conversa não encontrada.") {
-      return res.status(404).json({mensagem: erro.message,});
+      return res.status(404).json({
+        mensagem: erro.message,
+      });
     }
 
-    return res.status(500).json({mensagem: "Não foi possível responder à conversa.",});
+    if (
+      erro.message ===
+      "Não é possível responder uma conversa encerrada."
+    ) {
+      return res.status(409).json({
+        mensagem: erro.message,
+      });
+    }
+
+    return res.status(500).json({
+      mensagem: "Não foi possível responder à conversa.",
+    });
   }
 }
 

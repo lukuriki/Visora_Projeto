@@ -1,7 +1,6 @@
 
 import { pool } from "../config/database.js";
 
-// Listar todos os planos
 export async function listarPlanos(request, response, next) {
   try {
     const [planos] = await pool.query(
@@ -14,7 +13,6 @@ export async function listarPlanos(request, response, next) {
   }
 }
 
-// Buscar um plano pelo ID
 export async function buscarPlanoPorId(request, response, next) {
   try {
     const { id } = request.params;

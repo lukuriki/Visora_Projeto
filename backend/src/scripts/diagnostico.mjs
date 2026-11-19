@@ -1,5 +1,3 @@
-// Rode dentro da pasta backend:  node scripts/diagnostico.mjs
-// Testa banco, Asaas e e-mail usando o SEU backend/.env. Nunca imprime senhas/chaves.
 import "dotenv/config";
 import mysql from "mysql2/promise";
 import nodemailer from "nodemailer";
@@ -31,7 +29,6 @@ if (env.ASAAS_API_KEY) {
 }
 if (env.FRONTEND_URL && !/^https:\/\/|^http:\/\/localhost/.test(env.FRONTEND_URL)) aviso("FRONTEND_URL: o e-mail só aceita links https:// ou http://localhost.");
 
-// ---------------------------------------------------------------- 2) Banco
 console.log("\n2) Banco de dados");
 try {
   const conn = await mysql.createConnection({
@@ -63,7 +60,6 @@ try {
   if (e.code === "ER_BAD_DB_ERROR") aviso("O banco DB_NAME não existe.");
 }
 
-// ---------------------------------------------------------------- 3) Asaas
 console.log("\n3) Asaas");
 if (modo !== "asaas") {
   aviso("pulado (modo simulado)");
@@ -80,7 +76,6 @@ if (modo !== "asaas") {
     const corpo = await r.json().catch(() => null);
     if (r.ok) {
       ok("a chave de API foi aceita");
-      // PIX exige chave Pix ATIVA na conta do Asaas
       try {
         const rk = await fetch(`${base}/pix/addressKeys`, {
           headers: { access_token: env.ASAAS_API_KEY, "User-Agent": "Visora/1.0" },
@@ -108,7 +103,6 @@ if (modo !== "asaas") {
   }
 }
 
-// ---------------------------------------------------------------- 4) E-mail
 console.log("\n4) E-mail (SMTP)");
 if (!env.SMTP_HOST || !env.SMTP_USER || !env.SMTP_PASSWORD) {
   erro("SMTP incompleto");

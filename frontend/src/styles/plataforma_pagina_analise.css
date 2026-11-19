@@ -1,0 +1,342 @@
+/* ==========================================================================
+   VISORA · ANIMAÇÕES DA PÁGINA DE ANÁLISES
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   1. Cards: ficam estáveis, sem saltos ou movimentos no hover
+   -------------------------------------------------------------------------- */
+.v-card-brilho {
+  transform: none !important;
+  transition:
+    border-color 0.35s ease,
+    box-shadow 0.35s ease,
+    background-color 0.35s ease;
+}
+
+.v-card-brilho:hover {
+  transform: none !important;
+  box-shadow: 0 12px 28px rgba(39, 59, 49, 0.07);
+}
+
+.dark .v-card-brilho:hover {
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.16);
+}
+
+.v-card-brilho:hover svg,
+.v-card-brilho:hover > div:first-child svg {
+  transform: none !important;
+}
+
+/* --------------------------------------------------------------------------
+   2. Fundo: halos suaves e linhas em movimento
+   -------------------------------------------------------------------------- */
+.v-fundo-animado {
+  position: relative;
+  isolation: isolate;
+}
+
+.v-fundo-animado::before,
+.v-fundo-animado::after {
+  content: "";
+  position: absolute;
+  pointer-events: none;
+  z-index: -1;
+  border-radius: 999px;
+}
+
+.v-fundo-animado::before {
+  width: min(46vw, 560px);
+  height: min(46vw, 560px);
+  top: 4%;
+  right: -12%;
+  background: radial-gradient(
+    circle,
+    rgba(126, 153, 113, 0.14),
+    rgba(126, 153, 113, 0) 70%
+  );
+  animation: v-halo-flutuar 18s ease-in-out infinite alternate;
+}
+
+.v-fundo-animado::after {
+  width: min(40vw, 480px);
+  height: min(40vw, 480px);
+  top: 48%;
+  left: -14%;
+  background: radial-gradient(
+    circle,
+    rgba(88, 129, 87, 0.10),
+    rgba(88, 129, 87, 0) 72%
+  );
+  animation: v-halo-flutuar 23s ease-in-out infinite alternate-reverse;
+}
+
+.dark .v-fundo-animado::before {
+  background: radial-gradient(
+    circle,
+    rgba(163, 177, 138, 0.12),
+    rgba(163, 177, 138, 0) 70%
+  );
+}
+
+.dark .v-fundo-animado::after {
+  background: radial-gradient(
+    circle,
+    rgba(88, 129, 87, 0.13),
+    rgba(88, 129, 87, 0) 72%
+  );
+}
+
+@keyframes v-halo-flutuar {
+  from {
+    transform: translate3d(0, -12px, 0) scale(0.96);
+  }
+
+  to {
+    transform: translate3d(18px, 18px, 0) scale(1.05);
+  }
+}
+
+/* Linhas SVG do fundo */
+.v-pagina-analise > svg[viewBox="0 0 650 600"] {
+  z-index: 0;
+  overflow: visible;
+  opacity: 0.34;
+}
+
+.v-pagina-analise > svg[viewBox="0 0 650 600"] path.v-linha {
+  fill: none;
+  stroke-dasharray: 0.055 0.035;
+  stroke-dashoffset: 1;
+  opacity: 0.82;
+
+  animation:
+    v-linha-fluxo 17s linear infinite,
+    v-linha-respirar 6s ease-in-out infinite alternate;
+
+  animation-delay: var(--atraso, 0ms), 0ms;
+}
+
+.v-pagina-analise > svg[viewBox="0 0 650 600"] path.v-linha:nth-of-type(2) {
+  animation-duration: 21s, 7s;
+}
+
+.v-pagina-analise > svg[viewBox="0 0 650 600"] path.v-linha:nth-of-type(3) {
+  animation-duration: 25s, 8s;
+}
+
+.v-pagina-analise > svg[viewBox="0 0 650 600"] circle.v-ponto {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: v-ponto-pulsar 3.8s ease-in-out infinite;
+  animation-delay: var(--atraso, 0ms);
+}
+
+@keyframes v-linha-fluxo {
+  from {
+    stroke-dashoffset: 1;
+  }
+
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes v-linha-respirar {
+  from {
+    opacity: 0.38;
+  }
+
+  to {
+    opacity: 0.95;
+  }
+}
+
+@keyframes v-ponto-pulsar {
+  0%,
+  100% {
+    opacity: 0.45;
+    transform: scale(0.82);
+  }
+
+  50% {
+    opacity: 1;
+    transform: scale(1.35);
+  }
+}
+
+/* --------------------------------------------------------------------------
+   3. Animações de entrada conforme a rolagem da página
+   -------------------------------------------------------------------------- */
+.v-scroll-reveal {
+  opacity: 0;
+  transform: translate3d(0, 28px, 0);
+  filter: blur(3px);
+
+  transition:
+    opacity 0.75s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.75s cubic-bezier(0.22, 1, 0.36, 1),
+    filter 0.75s cubic-bezier(0.22, 1, 0.36, 1);
+
+  will-change: opacity, transform, filter;
+}
+
+.v-scroll-reveal.v-visivel {
+  opacity: 1;
+  transform: translate3d(0, 0, 0);
+  filter: blur(0);
+}
+
+/* Atrasos entre elementos */
+.v-scroll-reveal:nth-child(2) {
+  transition-delay: 70ms;
+}
+
+.v-scroll-reveal:nth-child(3) {
+  transition-delay: 130ms;
+}
+
+.v-scroll-reveal:nth-child(4) {
+  transition-delay: 190ms;
+}
+
+.v-scroll-reveal:nth-child(5) {
+  transition-delay: 240ms;
+}
+
+
+
+/* --------------------------------------------------------------------------
+   4. Título
+   -------------------------------------------------------------------------- */
+.v-pagina-analise h1 {
+  position: relative;
+  width: fit-content;
+}
+
+.v-pagina-analise h1::after {
+  content: "";
+  display: block;
+  width: 54px;
+  height: 3px;
+  margin-top: 12px;
+  border-radius: 999px;
+  transform-origin: left;
+
+  background: linear-gradient(
+    90deg,
+    #344e41,
+    #588157,
+    #a3b18a
+  );
+
+  animation: v-titulo-linha 0.9s cubic-bezier(0.22, 1, 0.36, 1) 420ms both;
+}
+
+@keyframes v-titulo-linha {
+  from {
+    opacity: 0;
+    transform: scaleX(0);
+  }
+
+  to {
+    opacity: 1;
+    transform: scaleX(1);
+  }
+}
+
+/* --------------------------------------------------------------------------
+   5. Animação dos gráficos
+   -------------------------------------------------------------------------- */
+.v-troca-chart {
+  animation: v-chart-entrada 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes v-chart-entrada {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* --------------------------------------------------------------------------
+   6. Painel de insights
+   -------------------------------------------------------------------------- */
+.v-insight-painel {
+  isolation: isolate;
+}
+
+.v-insight-painel::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  pointer-events: none;
+
+  background: linear-gradient(
+    115deg,
+    transparent 20%,
+    rgba(255, 255, 255, 0.07),
+    transparent 75%
+  );
+
+  transform: translateX(-100%);
+  animation: v-insight-luz 9s ease-in-out infinite;
+}
+
+@keyframes v-insight-luz {
+  0%,
+  68%,
+  100% {
+    transform: translateX(-100%);
+  }
+
+  84% {
+    transform: translateX(100%);
+  }
+}
+
+/* --------------------------------------------------------------------------
+   7. Acessibilidade: foco em botões e links
+   -------------------------------------------------------------------------- */
+.v-pagina-analise button:focus-visible,
+.v-pagina-analise a:focus-visible {
+  outline: 2px solid #7e9971;
+  outline-offset: 3px;
+}
+
+/* --------------------------------------------------------------------------
+   8. Responsividade
+   -------------------------------------------------------------------------- */
+@media (max-width: 1023px) {
+  .v-pagina-analise > svg[viewBox="0 0 650 600"] {
+    opacity: 0.22;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   9. Respeitar preferência por movimento reduzido
+   -------------------------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  .v-fundo-animado::before,
+  .v-fundo-animado::after,
+  .v-pagina-analise > svg[viewBox="0 0 650 600"] path.v-linha,
+  .v-pagina-analise > svg[viewBox="0 0 650 600"] circle.v-ponto,
+  .v-pagina-analise h1::after,
+  .v-insight-painel::after,
+  .v-troca-chart {
+    animation: none !important;
+  }
+
+  .v-scroll-reveal {
+    opacity: 1;
+    transform: none;
+    filter: none;
+    transition: none;
+  }
+}

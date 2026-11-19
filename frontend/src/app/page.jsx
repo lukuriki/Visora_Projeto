@@ -48,7 +48,7 @@ function TituloSecao({ id, label, title, text }) {
   return(
     <Reveal className="mx-auto mb-16 max-w-2xl text-center"> 
       <p className="inline-flex rounded-full border border-[#588157]/50 bg-[#dbe6d1] px-4 py-1.5 text-sm font-semibold text-[#588157] dark:border-[#A3B18A] dark:text-[#E6E5E0] dark:bg-[#7E9971]/80">{label}</p>
-      <h2 id={id} className="mt-5 text-3xl font-bold tracking-tight sm:text-5xl text-[#3A5A40] dark:text-[#769e75]">{title}</h2>
+      <h2 id={id} className="mt-5 text-3xl font-bold tracking-tight dark:text-[#769e75] sm:text-5xl">{title}</h2>
       <p className="mt-4 text-lg leading-8 text-[#3A5A40]/80 dark:text-[#C1CEC2]/80">{text}</p>
     </Reveal>
   );

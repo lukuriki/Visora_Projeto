@@ -19,10 +19,7 @@ export function autenticarUsuario(req, res, next) {
       });
     }
 
-    const decoded = jwt.verify(
-      token,
-      process.env.JWT_SECRET
-    );
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
     req.usuario = {
       id: decoded.id,
@@ -42,7 +39,6 @@ export function autenticarUsuarioOpcional(req, res, next) {
   try {
     const authorization = req.headers.authorization;
 
-    // Se não houver token, continua como visitante.
     if (!authorization) {
       req.usuario = null;
       return next();
