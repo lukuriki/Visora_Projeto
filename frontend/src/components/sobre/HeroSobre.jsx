@@ -13,7 +13,7 @@ const linhas = [
   { texto: "existe um propósito", classe: "font-semibold text-(--sb-brand)" },
 ];
 
-// Cada palavra sobe de dentro de uma "máscara", uma depois da outra
+
 function LinhaRevelada({ texto, classe, atraso, reduzir }) {
   return (
     <span className={`block ${classe}`}>

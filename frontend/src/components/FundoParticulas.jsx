@@ -62,7 +62,7 @@ export default function FundoParticulas({ className = "" }) {
 
     function atualizar() {
       for (const p of pontos) {
-        // Afasta suavemente do mouse
+        Afasta suavemente do mouse
         const dx = p.x - mouse.x;
         const dy = p.y - mouse.y;
         const dist = Math.hypot(dx, dy);
@@ -128,7 +128,7 @@ export default function FundoParticulas({ className = "" }) {
     redimensionar();
     if (!reduzir) loop();
 
-    // Redesenha ao trocar claro/escuro (útil quando a animação está parada)
+    Redesenha ao trocar claro/escuro (útil quando a animação está parada)
     const observador = new MutationObserver(desenhar);
     observador.observe(document.documentElement, {
       attributes: true,

@@ -1,4 +1,3 @@
-
 "use client";
 
 import { Suspense, useState, useEffect } from "react";
@@ -186,17 +185,17 @@ function Titulo({ titulo, texto, Icone }) {
     <div>
       <div className="flex items-center gap-3">
         {Icone && (
-          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-[#588157]/10 text-[#588157] dark:bg-[#588157]/20 dark:text-[#A3B18A]">
-            <Icone size={25} strokeWidth={1.8} />
+          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#588157]/10 text-[#588157] sm:h-12 sm:w-12 dark:bg-[#588157]/20 dark:text-[#A3B18A]">
+            <Icone size={25} strokeWidth={1.8} className="h-5 w-5 sm:h-[25px] sm:w-[25px]" />
           </div>
         )}
 
-        <h1 className="text-2xl font-bold tracking-tight text-[#273B31] dark:text-[#F2F2F2] sm:text-3xl">
+        <h1 className="text-xl font-bold tracking-tight text-[#273B31] dark:text-[#F2F2F2] sm:text-2xl md:text-3xl">
           {titulo}
         </h1>
       </div>
 
-      <p className={`mt-3 ${textoSuave}`}>
+      <p className={`mt-3 text-sm sm:text-base ${textoSuave}`}>
         {texto}
       </p>
     </div>
@@ -209,7 +208,7 @@ function Stepper({ etapaAtual }) {
   return (
     <nav
       aria-label="Etapas da contratação"
-      className="mx-auto flex max-w-3xl items-start pb-10"
+      className="mx-auto flex max-w-3xl items-start pb-12 sm:pb-14"
     >
       {etapas.map((etapa, i) => {
         const numero = i + 1;
@@ -223,12 +222,12 @@ function Stepper({ etapaAtual }) {
           >
             <div className="relative flex flex-col items-center">
               {atual && (
-                <span className="anel absolute h-10 w-10 rounded-full bg-[#588157]" />
+                <span className="anel absolute h-8 w-8 rounded-full bg-[#588157] sm:h-10 sm:w-10" />
               )}
 
               <div
                 aria-current={atual ? "step" : undefined}
-                className={`relative flex h-10 w-10 items-center justify-center rounded-full border-2 text-sm font-semibold transition-all duration-500 ${
+                className={`relative flex h-8 w-8 items-center justify-center rounded-full border-2 text-xs font-semibold transition-all duration-500 sm:h-10 sm:w-10 sm:text-sm ${
                   atual
                     ? "scale-110 border-[#588157] bg-[#588157] text-white shadow-lg shadow-[#588157]/40"
                     : concluida
@@ -240,7 +239,7 @@ function Stepper({ etapaAtual }) {
               </div>
 
               <span
-                className={`absolute top-12 w-20 text-center text-xs transition-colors ${
+                className={`absolute top-10 w-16 text-center text-[11px] sm:top-12 sm:w-20 sm:text-xs transition-colors ${
                   atual
                     ? "font-semibold text-[#3A5A40] dark:text-[#F2F2F2]"
                     : `hidden sm:block ${textoSuave}`
@@ -251,7 +250,7 @@ function Stepper({ etapaAtual }) {
             </div>
 
             {i < etapas.length - 1 && (
-              <div className="mx-2 mt-5 h-0.5 flex-1 overflow-hidden rounded-full bg-[#DAD7CD] dark:bg-white/10">
+              <div className="mx-1 mt-4 h-0.5 flex-1 overflow-hidden rounded-full bg-[#DAD7CD] sm:mx-2 sm:mt-5 dark:bg-white/10">
                 <div
                   className="h-full rounded-full bg-gradient-to-r from-[#588157] to-[#A3B18A] transition-all duration-700 ease-out"
                   style={{ width: concluida ? "100%" : "0%" }}
@@ -286,24 +285,29 @@ function ConteudoPagamento() {
 
   const [contratacao, setContratacao] = useState(null);
   const [resumoFinal, setResumoFinal] = useState(null);
-  const [copiado, setCopiado] = useState(false);
+  const [copiado, setCopiado] = useState("");
   const [simulando, setSimulando] = useState(false);
 
-  // Verifica a aprovação do pagamento a cada 4 segundos.
+
   useEffect(() => {
     if (!contratacao?.codigo || resumoFinal) return;
 
     let ativo = true;
+    let verificando = false;
 
     async function verificar() {
+      if (!ativo || verificando) return;
+      verificando = true;
       try {
         const resumo = await consultarContratacao(contratacao.codigo);
 
         if (ativo && resumo?.pagamento?.status === "aprovado") {
           setResumoFinal(resumo);
         }
-      } catch {
-        // Tenta novamente no próximo ciclo.
+      } catch (error) {
+        console.warn("Não foi possível consultar o pagamento:", error.message);
+      } finally {
+        verificando = false;
       }
     }
 
@@ -317,7 +321,6 @@ function ConteudoPagamento() {
     };
   }, [contratacao?.codigo, resumoFinal]);
 
-  // Carrega o plano selecionado.
   useEffect(() => {
     async function carregarPlano() {
       if (!planoId) {
@@ -368,6 +371,7 @@ function ConteudoPagamento() {
   function atualizarCampo(event) {
     const { name, value, type, checked } = event.target;
 
+    setConfirmacao(false);
     setDadosCadastro((dados) => ({
       ...dados,
       [name]: type === "checkbox" ? checked : value,
@@ -462,7 +466,7 @@ function ConteudoPagamento() {
   }
 
   async function enviarContratacao() {
-    if (!validarEtapa()) return;
+    if (enviando || sucessoCadastro || !validarEtapa()) return;
 
     if (!plano?.id) {
       setErroCadastro("O plano selecionado não é válido.");
@@ -491,11 +495,14 @@ function ConteudoPagamento() {
     }
   }
 
-  async function copiarCodigoPix() {
+  async function copiarCodigo(texto, tipo) {
+    if (!texto) return;
+
     try {
-      await navigator.clipboard.writeText(contratacao.pix.copiaECola);
-      setCopiado(true);
-      setTimeout(() => setCopiado(false), 2000);
+      await navigator.clipboard.writeText(texto);
+      setCopiado(tipo);
+      setErroCadastro("");
+      setTimeout(() => setCopiado(""), 2000);
     } catch {
       setErroCadastro(
         "Não foi possível copiar. Selecione o código e copie manualmente."
@@ -523,7 +530,6 @@ function ConteudoPagamento() {
   const nomeForma = (valor) =>
     formasPagamento.find((f) => f.valor === valor)?.nome ?? valor;
 
-  /* ---------- carregando / erro ---------- */
 
   if (carregandoPlano) {
     return (
@@ -548,7 +554,7 @@ function ConteudoPagamento() {
         <p>{erroPlano || "Plano não encontrado."}</p>
 
         <button
-          onClick={() => window.history.back()}
+          onClick={() => { window.location.href = "/areapublica_pagina_planos"; }}
           className={botaoPrimario}
         >
           Voltar para os planos
@@ -559,7 +565,7 @@ function ConteudoPagamento() {
 
   const resumo = [
     ["Plano", nomePlano],
-    ["Valor mensal", `${precoFormatado} / mês`],
+    ["Valor do plano", precoFormatado],
     ["Nome", dadosCadastro.nomeCompleto],
     ["E-mail pessoal", dadosCadastro.emailPessoal],
     ["Empresa", dadosCadastro.nomeEmpresa],
@@ -569,30 +575,31 @@ function ConteudoPagamento() {
   ];
 
   return (
-    <main className="relative min-h-screen px-4 py-10 text-[#273B31] dark:text-[#F2F2F2] sm:px-10 sm:py-14">
+    <main className="relative min-h-screen px-4 py-6 text-[#273B31] dark:text-[#F2F2F2] sm:px-8 sm:py-10 lg:px-10 lg:py-14">
   <style>{css}</style>
   <Fundo />
 
-  <button
-  type="button"
-  onClick={() => {
-    window.location.href = "/areapublica_pagina_planos";
-  }}
-  className="group absolute left-4 top-5 z-20 inline-flex items-center gap-2 rounded-xl border border-[#A3B18A]/50 bg-white/80 px-4 py-2.5 text-sm font-semibold text-[#3A5A40] shadow-sm backdrop-blur transition-all duration-300 hover:-translate-y-0.5 hover:border-[#588157] hover:bg-[#588157] hover:text-white hover:shadow-md active:translate-y-0 sm:left-10 sm:top-7 dark:border-white/10 dark:bg-[#273B31]/80 dark:text-[#A3B18A] dark:hover:border-[#A3B18A] dark:hover:bg-[#3A5A40] dark:hover:text-white"
->
-  <ArrowLeft
-    size={18}
-    className="transition-transform duration-300 group-hover:-translate-x-1"
-  />
-  Voltar aos planos
-</button>
+  <div className="mx-auto mb-6 max-w-3xl sm:mb-8 xl:mb-0">
+    <button
+      type="button"
+      onClick={() => {
+        window.location.href = "/areapublica_pagina_planos";
+      }}
+      className="group inline-flex items-center gap-2 rounded-xl border border-[#A3B18A]/50 bg-white/80 px-3.5 py-2 text-sm font-semibold text-[#3A5A40] shadow-sm backdrop-blur transition-all duration-300 hover:-translate-y-0.5 hover:border-[#588157] hover:bg-[#588157] hover:text-white hover:shadow-md active:translate-y-0 sm:px-4 sm:py-2.5 xl:absolute xl:left-10 xl:top-7 xl:z-20 dark:border-white/10 dark:bg-[#273B31]/80 dark:text-[#A3B18A] dark:hover:border-[#A3B18A] dark:hover:bg-[#3A5A40] dark:hover:text-white"
+    >
+      <ArrowLeft
+        size={18}
+        className="transition-transform duration-300 group-hover:-translate-x-1"
+      />
+      Voltar aos planos
+    </button>
+  </div>
 
   <Stepper etapaAtual={etapaAtual} />
 
-      <div className="mx-auto max-w-3xl rounded-3xl border border-white/70 bg-white/70 p-5 shadow-xl shadow-[#273B31]/10 backdrop-blur-xl dark:border-white/10 dark:bg-[#273B31]/70 dark:shadow-black/30 sm:p-9">
+      <div className="mx-auto max-w-3xl rounded-3xl border border-white/70 bg-white/70 p-4 shadow-xl shadow-[#273B31]/10 backdrop-blur-xl dark:border-white/10 dark:bg-[#273B31]/70 dark:shadow-black/30 min-[400px]:p-5 sm:p-7 md:p-9">
         <div key={etapaAtual} className="etapa-in">
 
-          {/* ETAPA 1 - PLANO */}
 
           {etapaAtual === 1 && (
             <section>
@@ -601,34 +608,34 @@ function ConteudoPagamento() {
                 texto="Confira o plano que deseja contratar."
               />
 
-              <div className="brilho relative mt-6 overflow-hidden rounded-3xl bg-gradient-to-br from-[#588157] via-[#3A5A40] to-[#273B31] p-6 text-white shadow-2xl shadow-[#3A5A40]/30 sm:p-8">
-                <span className="rounded-full border border-white/20 bg-white/15 px-3 py-1 text-sm backdrop-blur">
+              <div className="brilho relative mt-6 overflow-hidden rounded-3xl bg-gradient-to-br from-[#588157] via-[#3A5A40] to-[#273B31] p-5 text-white shadow-2xl shadow-[#3A5A40]/30 sm:p-8">
+                <span className="rounded-full border border-white/20 bg-white/15 px-3 py-1 text-xs backdrop-blur sm:text-sm">
                   Plano selecionado
                 </span>
 
-                <h2 className="mt-5 text-3xl font-bold tracking-tight sm:text-4xl">
+                <h2 className="mt-5 break-words text-2xl font-bold tracking-tight sm:text-3xl md:text-4xl">
                   {nomePlano}
                 </h2>
 
-                <p className="mt-2 max-w-md text-white/75">
+                <p className="mt-2 max-w-md text-sm text-white/75 sm:text-base">
                   A solução para gerenciar sua empresa de forma simples e eficiente.
                 </p>
 
-                <div className="mt-7 rounded-2xl bg-[#F2F2F2] p-5 text-[#273B31]">
+                <div className="mt-6 rounded-2xl bg-[#F2F2F2] p-4 text-[#273B31] sm:mt-7 sm:p-5">
                   <p className="text-sm font-medium text-[#3A5A40]">
-                    Investimento mensal
+                    Valor total do plano
                   </p>
 
-                  <p className="mt-1 text-4xl font-bold tracking-tight">
+                  <p className="mt-1 text-3xl font-bold tracking-tight sm:text-4xl">
                     {precoFormatado}
                   </p>
 
                   <p className="mt-2 text-sm text-[#588157]">
-                    Cobrança mensal, conforme as condições do plano.
+                    Valor referente ao período do plano selecionado.
                   </p>
                 </div>
 
-                <h3 className="mt-7 text-lg font-semibold">
+                <h3 className="mt-6 text-base font-semibold sm:mt-7 sm:text-lg">
                   O que está incluso
                 </h3>
 
@@ -636,7 +643,7 @@ function ConteudoPagamento() {
                   {beneficios.map((b) => (
                     <div
                       key={b}
-                      className="flex items-center gap-3 rounded-xl bg-white/10 p-3 backdrop-blur transition hover:bg-white/20"
+                      className="flex items-center gap-3 rounded-xl bg-white/10 p-3 text-sm backdrop-blur transition hover:bg-white/20 sm:text-base"
                     >
                       <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-white/20 text-xs">
                         ✓
@@ -646,14 +653,12 @@ function ConteudoPagamento() {
                   ))}
                 </div>
 
-                <p className="mt-7 rounded-xl bg-white/10 p-4 text-sm text-white/80">
-                  A cobrança real depende da integração com um serviço de pagamento.
+                <p className="mt-6 rounded-xl bg-white/10 p-4 text-sm text-white/80 sm:mt-7">
+                  Confira as condições do plano antes de continuar.
                 </p>
               </div>
             </section>
           )}
-
-          {/* ETAPA 2 - DADOS PESSOAIS */}
 
           {etapaAtual === 2 && (
             <section>
@@ -680,7 +685,6 @@ function ConteudoPagamento() {
             </section>
           )}
 
-          {/* ETAPA 3 - DADOS DA EMPRESA */}
 
           {etapaAtual === 3 && (
             <section>
@@ -758,24 +762,53 @@ function ConteudoPagamento() {
                   </select>
                 </div>
 
-                <label className="flex cursor-pointer items-start gap-3 rounded-xl border border-[#A3B18A]/50 p-4 text-sm transition hover:border-[#588157] dark:border-white/10">
+                <div className="flex items-start gap-3 rounded-xl border border-[#A3B18A]/50 p-3 text-sm transition hover:border-[#588157] sm:p-4 dark:border-white/10">
+
                   <input
+                    id="aceitouTermos"
                     type="checkbox"
                     name="aceitouTermos"
                     checked={dadosCadastro.aceitouTermos}
                     onChange={atualizarCampo}
-                    className="mt-0.5 h-4 w-4 accent-[#588157]"
+                    className="mt-0.5 h-4 w-4 shrink-0 cursor-pointer accent-[#588157]"
                   />
 
-                  <span>
-                    Declaro que li e aceito os Termos de Uso e a Política de Privacidade.
-                  </span>
-                </label>
+                  <div className="leading-relaxed text-[#273B31] dark:text-[#E5EDE5]">
+
+                    <label
+                      htmlFor="aceitouTermos"
+                      className="cursor-pointer"
+                    >
+                      Declaro que li e aceito os{" "}
+                    </label>
+
+                    <a
+                      href="/termos_de_uso.pdf"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="font-semibold text-[#588157] underline underline-offset-4 transition-colors hover:text-[#3A5A40] dark:text-[#A3B18A] dark:hover:text-white"
+                    >
+                      Termos de Uso
+                    </a>
+
+                    {" "}e a{" "}
+
+                    <a
+                      href="/politica_de_privacidade.pdf"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="font-semibold text-[#588157] underline underline-offset-4 transition-colors hover:text-[#3A5A40] dark:text-[#A3B18A] dark:hover:text-white"
+                    >
+                      Política de Privacidade
+                    </a>.
+
+                  </div>
+                </div>
+
               </div>
             </section>
           )}
 
-          {/* ETAPA 4 - FORMA DE PAGAMENTO */}
 
           {etapaAtual === 4 && (
             <section>
@@ -793,7 +826,7 @@ function ConteudoPagamento() {
                   return (
                     <label
                       key={forma.valor}
-                      className={`flex cursor-pointer items-center gap-4 rounded-2xl border p-4 transition duration-200 hover:-translate-y-0.5 ${
+                      className={`flex cursor-pointer items-center gap-3 rounded-2xl border p-3 transition duration-200 hover:-translate-y-0.5 sm:gap-4 sm:p-4 ${
                         ativa
                           ? "border-[#588157] bg-[#588157]/10 shadow-lg shadow-[#588157]/15 ring-2 ring-[#588157]/30"
                           : "border-[#A3B18A]/60 bg-white/50 hover:border-[#588157] dark:border-white/10 dark:bg-white/5"
@@ -804,15 +837,15 @@ function ConteudoPagamento() {
                         name="pagamento"
                         value={forma.valor}
                         checked={ativa}
-                        onChange={() => setFormaPagamento(forma.valor)}
+                        onChange={() => { setFormaPagamento(forma.valor); setConfirmacao(false); }}
                         className="sr-only"
                       />
 
-                      <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-[#588157]/15 text-[#588157] dark:text-[#A3B18A]">
+                      <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#588157]/15 text-[#588157] sm:h-11 sm:w-11 dark:text-[#A3B18A]">
                         <Icone size={23} strokeWidth={1.8} />
                       </span>
 
-                      <span className="flex-1">
+                      <span className="min-w-0 flex-1">
                         <span className="block font-semibold">
                           {forma.nome}
                         </span>
@@ -823,7 +856,7 @@ function ConteudoPagamento() {
                       </span>
 
                       <span
-                        className={`flex h-6 w-6 items-center justify-center rounded-full border-2 text-xs text-white transition ${
+                        className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full border-2 text-xs text-white transition ${
                           ativa
                             ? "pop border-[#588157] bg-[#588157]"
                             : "border-[#A3B18A]"
@@ -838,7 +871,6 @@ function ConteudoPagamento() {
             </section>
           )}
 
-          {/* ETAPA 5 - RESUMO DA COMPRA */}
 
           {etapaAtual === 5 && (
             <section>
@@ -852,25 +884,25 @@ function ConteudoPagamento() {
                 {resumo.map(([titulo, valor]) => (
                   <div
                     key={titulo}
-                    className="rounded-2xl bg-[#E6E5E0]/80 p-4 dark:bg-[#344E41]/80"
+                    className="min-w-0 rounded-2xl bg-[#E6E5E0]/80 p-3 sm:p-4 dark:bg-[#344E41]/80"
                   >
                     <p className={`text-sm ${textoSuave}`}>
                       {titulo}
                     </p>
 
-                    <p className="break-words font-semibold">
+                    <p className="break-words font-semibold [overflow-wrap:anywhere]">
                       {valor}
                     </p>
                   </div>
                 ))}
               </div>
 
-              <label className="mt-4 flex cursor-pointer items-start gap-3 rounded-xl border border-[#A3B18A]/50 p-4 text-sm transition hover:border-[#588157] dark:border-white/10">
+              <label className="mt-4 flex cursor-pointer items-start gap-3 rounded-xl border border-[#A3B18A]/50 p-3 text-sm transition hover:border-[#588157] sm:p-4 dark:border-white/10">
                 <input
                   type="checkbox"
                   checked={confirmacao}
                   onChange={(event) => setConfirmacao(event.target.checked)}
-                  className="mt-0.5 h-4 w-4 accent-[#588157]"
+                  className="mt-0.5 h-4 w-4 shrink-0 accent-[#588157]"
                 />
 
                 <span>
@@ -883,8 +915,6 @@ function ConteudoPagamento() {
               </p>
             </section>
           )}
-
-          {/* ETAPA 6 - FINALIZAÇÃO */}
 
           {etapaAtual === 6 && contratacao && (
             <section className="text-center">
@@ -911,17 +941,17 @@ function ConteudoPagamento() {
                     </div>
                   </div>
 
-                  <h1 className="mt-6 text-2xl font-bold tracking-tight sm:text-3xl">
+                  <h1 className="mt-6 text-xl font-bold tracking-tight sm:text-2xl md:text-3xl">
                     Pagamento confirmado!
                   </h1>
 
-                  <p className={`mt-3 ${textoSuave}`}>
+                  <p className={`mt-3 text-sm sm:text-base ${textoSuave}`}>
                     Enviamos um e-mail para{" "}
-                    <strong>{resumoFinal.usuario.email}</strong> com o seu nome de
+                    <strong className="break-all">{resumoFinal.usuario.email}</strong> com o seu nome de
                     usuário e o link para criar a senha e ativar a conta. O link vale por 48 horas.
                   </p>
 
-                  <div className="mt-6 space-y-2 rounded-2xl bg-[#E6E5E0]/80 p-5 text-left text-sm dark:bg-[#344E41]/80">
+                  <div className="mt-6 space-y-2 rounded-2xl bg-[#E6E5E0]/80 p-4 text-left text-sm sm:p-5 dark:bg-[#344E41]/80">
                     <p className="text-base font-semibold">
                       Resumo da compra
                     </p>
@@ -948,7 +978,7 @@ function ConteudoPagamento() {
 
                   <a
                     href={urlReciboContratacao(contratacao.codigo)}
-                    className={`${botaoPrimario} mt-6 inline-block`}
+                    className={`${botaoPrimario} mt-6 block w-full text-center sm:inline-block sm:w-auto`}
                   >
                     Baixar recibo (PDF)
                   </a>
@@ -965,11 +995,11 @@ function ConteudoPagamento() {
                     <span className="girar absolute inset-0 rounded-full border-4 border-[#A3B18A]/40 border-t-[#588157]" />
                   </div>
 
-                  <h1 className="mt-6 text-2xl font-bold tracking-tight sm:text-3xl">
+                  <h1 className="mt-6 text-xl font-bold tracking-tight sm:text-2xl md:text-3xl">
                     Aguardando pagamento
                   </h1>
 
-                  <p className={`mt-3 ${textoSuave}`}>
+                  <p className={`mt-3 text-sm sm:text-base ${textoSuave}`}>
                     Valor:{" "}
                     <strong className="text-[#273B31] dark:text-[#F2F2F2]">
                       {formatarMoeda(contratacao.valor)}
@@ -978,7 +1008,7 @@ function ConteudoPagamento() {
                   </p>
 
                   {contratacao.pix && (
-                    <div className="mt-6 rounded-2xl bg-[#E6E5E0]/80 p-5 dark:bg-[#344E41]/80">
+                    <div className="mt-6 rounded-2xl bg-[#E6E5E0]/80 p-4 sm:p-5 dark:bg-[#344E41]/80">
                       <p className="font-semibold">Pague com Pix</p>
 
                       {contratacao.pix.qrCodeBase64 && (
@@ -986,7 +1016,7 @@ function ConteudoPagamento() {
                         <img
                           src={`data:image/png;base64,${contratacao.pix.qrCodeBase64}`}
                           alt="QR Code do Pix"
-                          className="pop mx-auto mt-4 h-56 w-56 rounded-2xl bg-white p-3 shadow-lg"
+                          className="pop mx-auto mt-4 h-48 w-48 rounded-2xl bg-white p-3 shadow-lg sm:h-56 sm:w-56"
                         />
                       )}
 
@@ -1004,28 +1034,128 @@ function ConteudoPagamento() {
 
                       <button
                         type="button"
-                        onClick={copiarCodigoPix}
-                        className={`${botaoPrimario} mt-3`}
+                        onClick={() => copiarCodigo(contratacao.pix.copiaECola, "pix")}
+                        className={`${botaoPrimario} mt-3 w-full sm:w-auto`}
                       >
-                        {copiado ? "Copiado!" : "Copiar código Pix"}
+                        {copiado === "pix" ? "Copiado!" : "Copiar código Pix"}
                       </button>
                     </div>
                   )}
 
-                  {contratacao.urlPagamento && (
-                    <a
-                      href={contratacao.urlPagamento}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className={`${botaoPrimario} mt-6 inline-block`}
-                    >
-                      {contratacao.metodo === "boleto"
-                        ? "Ver boleto"
-                        : contratacao.metodo === "pix"
-                          ? "Abrir fatura"
-                          : "Pagar com cartão"}
-                    </a>
-                  )}
+
+{contratacao.boleto && (
+  <div className="mt-6 rounded-2xl bg-[#E6E5E0]/80 p-4 text-left sm:p-5 dark:bg-[#344E41]/80">
+
+    <h3 className="text-center text-base font-semibold sm:text-lg">
+      Pagamento por boleto bancário
+    </h3>
+
+    <p className={`mt-2 text-center text-sm ${textoSuave}`}>
+      Utilize a linha digitável ou abra o boleto
+      para realizar o pagamento.
+    </p>
+
+    {contratacao.boleto.linhaDigitavel && (
+      <div className="mt-5">
+
+        <label className={classeLabel}>
+          Linha digitável
+        </label>
+
+        <textarea
+          readOnly
+          rows={2}
+          value={contratacao.boleto.linhaDigitavel}
+          onFocus={(event) => event.target.select()}
+          className={`${classeInput} text-sm`}
+        />
+
+        <button
+          type="button"
+          onClick={() => copiarCodigo(
+            contratacao.boleto.linhaDigitavel,
+            "boleto"
+          )}
+          className={`${botaoPrimario} mt-3 w-full`}
+        >
+          {copiado === "boleto" ? "Código copiado!" : "Copiar linha digitável"}
+        </button>
+
+      </div>
+    )}
+
+    {contratacao.boleto.codigoBarras && (
+      <div className="mt-5">
+
+        <label className={classeLabel}>
+          Código de barras
+        </label>
+
+        <input
+          readOnly
+          value={contratacao.boleto.codigoBarras}
+          onFocus={(event) => event.target.select()}
+          className={`${classeInput} text-sm`}
+        />
+
+      </div>
+    )}
+
+    {contratacao.boleto.vencimento && (
+      <p className={`mt-4 text-center text-sm ${textoSuave}`}>
+        Vencimento: {formatarData(
+          `${contratacao.boleto.vencimento}T12:00:00`
+        )}
+      </p>
+    )}
+
+    {(contratacao.boleto.url || contratacao.urlPagamento) && (
+      <a
+        href={contratacao.boleto.url || contratacao.urlPagamento}
+        target="_blank"
+        rel="noopener noreferrer"
+        className={`${botaoSecundario} mt-5 block text-center`}
+      >
+        Visualizar boleto
+      </a>
+    )}
+
+  </div>
+)}
+
+
+{contratacao.cartao && (
+  <div className="mt-6 rounded-2xl bg-[#E6E5E0]/80 p-4 sm:p-5 dark:bg-[#344E41]/80">
+
+    <CreditCard
+      size={40}
+      className="mx-auto text-[#588157]"
+    />
+
+    <h3 className="mt-4 text-base font-semibold sm:text-lg">
+      Pagamento com cartão de crédito
+    </h3>
+
+    <p className={`mt-2 text-sm ${textoSuave}`}>
+      Informe os dados do cartão na página segura
+      de pagamento do Asaas.
+    </p>
+
+    {(contratacao.cartao.urlPagamento || contratacao.urlPagamento) && (
+      <a
+        href={contratacao.cartao.urlPagamento || contratacao.urlPagamento}
+        target="_blank"
+        rel="noopener noreferrer"
+        className={`${botaoPrimario} mt-5 block w-full text-center sm:inline-block sm:w-auto`}
+      >
+        Pagar com cartão
+      </a>
+    )}
+
+  </div>
+)}
+
+
 
                   {contratacao.modo === "simulado" && (
                     <div className="mt-6 rounded-2xl border border-dashed border-[#A3B18A] p-4">
@@ -1037,7 +1167,7 @@ function ConteudoPagamento() {
                         type="button"
                         onClick={simularPagamento}
                         disabled={simulando}
-                        className={`${botaoPrimario} mt-3`}
+                        className={`${botaoPrimario} mt-3 w-full sm:w-auto`}
                       >
                         {simulando ? "Simulando..." : "Simular pagamento"}
                       </button>
@@ -1053,7 +1183,6 @@ function ConteudoPagamento() {
           )}
         </div>
 
-        {/* ERROS */}
 
         {erroCadastro && (
           <p
@@ -1065,13 +1194,12 @@ function ConteudoPagamento() {
         )}
       </div>
 
-      {/* NAVEGAÇÃO */}
 
-      <div className="mt-8 flex flex-wrap justify-center gap-4">
+      <div className="mx-auto mt-6 flex max-w-3xl flex-col-reverse gap-3 sm:mt-8 sm:max-w-none sm:flex-row sm:flex-wrap sm:justify-center sm:gap-4">
         <button
           onClick={voltarEtapa}
           disabled={etapaAtual === 1 || enviando || sucessoCadastro}
-          className={botaoSecundario}
+          className={`${botaoSecundario} w-full sm:w-auto`}
         >
           Voltar
         </button>
@@ -1079,7 +1207,7 @@ function ConteudoPagamento() {
         {etapaAtual < 5 && (
           <button
             onClick={avancarEtapa}
-            className={botaoPrimario}
+            className={`${botaoPrimario} w-full sm:w-auto`}
           >
             Continuar
           </button>
@@ -1089,7 +1217,7 @@ function ConteudoPagamento() {
           <button
             onClick={enviarContratacao}
             disabled={enviando || sucessoCadastro}
-            className={botaoPrimario}
+            className={`${botaoPrimario} w-full sm:w-auto`}
           >
             {enviando ? "Processando..." : "Finalizar compra"}
           </button>
@@ -1100,7 +1228,7 @@ function ConteudoPagamento() {
             onClick={() => {
               window.location.href = "/areapublica_pagina_planos";
             }}
-            className={botaoPrimario}
+            className={`${botaoPrimario} w-full sm:w-auto`}
           >
             Voltar aos planos
           </button>

@@ -15,44 +15,88 @@ export function ThemeProvider({ children }) {
   const [darkMode, setDarkMode] = useState(false);
   const [carregado, setCarregado] = useState(false);
 
+
+  
+
   useEffect(() => {
+    const root = document.documentElement;
+
     const temaSalvo = localStorage.getItem("visora-theme");
+
+    const prefereEscuro = window.matchMedia(
+      "(prefers-color-scheme: dark)"
+    ).matches;
 
     const temaInicial =
       temaSalvo === "dark" ||
-      (!temaSalvo &&
-        window.matchMedia("(prefers-color-scheme: dark)").matches);
+      (!temaSalvo && prefereEscuro);
+
+    root.classList.toggle("dark", temaInicial);
 
     setDarkMode(temaInicial);
-
-    document.documentElement.classList.toggle("dark", temaInicial);
-
     setCarregado(true);
   }, []);
 
+  
+
   const toggleTheme = useCallback(() => {
-    setDarkMode((atual) => {
-      const novoTema = !atual;
+    const root = document.documentElement;
 
-      document.documentElement.classList.toggle("dark", novoTema);
 
-      localStorage.setItem(
-        "visora-theme",
-        novoTema ? "dark" : "light"
-      );
+    const novoTema = !root.classList.contains("dark");
 
-      return novoTema;
-    });
+    root.classList.toggle("dark", novoTema);
+
+
+    localStorage.setItem(
+      "visora-theme",
+      novoTema ? "dark" : "light"
+    );
+
+    setDarkMode(novoTema);
   }, []);
 
-  if (!carregado) return null;
+  
+
+  useEffect(() => {
+    if (!carregado) return;
+
+    const root = document.documentElement;
+
+    const observer = new MutationObserver(() => {
+      const temaAtual = root.classList.contains("dark");
+
+      setDarkMode((anterior) =>
+        anterior === temaAtual ? anterior : temaAtual
+      );
+    });
+
+    observer.observe(root, {
+      attributes: true,
+      attributeFilter: ["class"],
+    });
+
+    return () => observer.disconnect();
+  }, [carregado])
+
+  if (!carregado) {
+    return null;
+  }
+
 
   return (
-    <ThemeContext.Provider value={{ darkMode, toggleTheme }}>
+    <ThemeContext.Provider
+      value={{
+        darkMode,
+        toggleTheme,
+      }}
+    >
       {children}
     </ThemeContext.Provider>
   );
 }
+
+
 
 export function useTheme() {
   const contexto = useContext(ThemeContext);

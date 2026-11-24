@@ -67,7 +67,7 @@ export default function DadosEmClareza() {
           <span aria-hidden="true" className={`size-2 rounded-full transition-colors duration-500 ${ claro ? "bg-(--sb-accent)" : "bg-(--sb-muted)"}`}/>
           <AnimatePresence mode="wait" initial={false}>
             <motion.span key={claro ? "claro" : "solto"} initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -6 }} transition={{ duration: 0.25 }} className={claro ? "text-(--sb-fg)" : "text-(--sb-muted)"}>
-              {claro ? "Visão clara" : "Dados soltos"}
+              {claro ? "Visão clara" : "Dados"}
             </motion.span>
           </AnimatePresence>
         </div>

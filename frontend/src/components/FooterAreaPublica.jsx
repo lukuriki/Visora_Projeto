@@ -25,17 +25,17 @@ export default function FooterAreaPublica() {
       />
 
       <div className="relative mx-auto max-w-7xl
-        px-6 py-10 md:px-10 md:py-12">
+        px-4 py-8 sm:px-6 sm:py-10 md:px-10 md:py-12">
 
-        <div className="grid gap-10 sm:grid-cols-2
-          lg:grid-cols-[1.4fr_0.8fr_1fr] lg:gap-16">
+        <div className="grid gap-8 sm:grid-cols-2 sm:gap-10
+          lg:grid-cols-[1.4fr_0.8fr_1fr] lg:gap-10 xl:gap-16">
 
           {/* Logo e slogan */}
-          <div className="max-w-sm">
+          <div className="max-w-sm sm:col-span-2 lg:col-span-1">
             <Link href="/" aria-label="Visora - Página inicial" className="mb-4 inline-flex items-center">
-              <img className="ml-[-20px] block w-72 dark:hidden" src="/logo_horizontal_lightmode.png" alt="Logo Visora"/>
+              <img className="-ml-3 block w-56 sm:-ml-5 sm:w-64 lg:w-72 dark:hidden" src="/logo_horizontal_lightmode.png" alt="Logo Visora"/>
 
-              <img className="ml-[-20px] hidden w-72 dark:block" src="/logo_horizontal_darkmode.png" alt="Logo Visora"/>
+              <img className="-ml-3 hidden w-56 sm:-ml-5 sm:w-64 lg:w-72 dark:block" src="/logo_horizontal_darkmode.png" alt="Logo Visora"/>
             </Link>
 
             <p className="max-w-xs text-sm leading-7
@@ -43,8 +43,8 @@ export default function FooterAreaPublica() {
               Transforme dados em visão. Tome decisões com confiança.
             </p>
 
-            <p className="mt-4 text-xs font-semibold tracking-wide
-              text-[#588157] dark:text-[#A3B18A]">
+            <p className="mt-4 text-[11px] font-semibold tracking-wide
+              text-[#588157] sm:text-xs dark:text-[#A3B18A]">
               DADOS • ESTRATÉGIA • RESULTADOS
             </p>
           </div>
@@ -60,7 +60,7 @@ export default function FooterAreaPublica() {
                 <li key={item.href}>
                   <Link
                     href={item.href}
-                    className="text-sm text-[#536258]
+                    className="inline-block py-0.5 text-sm text-[#536258]
                       transition-colors hover:text-[#344E41]
                       dark:text-[#C4CEC5]
                       dark:hover:text-[#A3B18A]"
@@ -84,16 +84,16 @@ export default function FooterAreaPublica() {
               com a Visora.
             </p>
 
-            <div className="flex items-center gap-3">
+            <div className="flex flex-wrap items-center gap-3">
               <a
                 href="https://www.instagram.com/"
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="Instagram"
-                className="flex size-10 items-center justify-center
+                className="flex size-11 items-center justify-center
                   rounded-xl border border-[#DAD7CD] bg-white
                   text-[#344E41] transition hover:-translate-y-1
-                  hover:border-[#588157] dark:border-[#435449]
+                  hover:border-[#588157] sm:size-10 dark:border-[#435449]
                   dark:bg-[#26362D] dark:text-white
                   dark:hover:border-[#A3B18A]"
               >
@@ -113,10 +113,10 @@ export default function FooterAreaPublica() {
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="LinkedIn"
-                className="flex size-10 items-center justify-center
+                className="flex size-11 items-center justify-center
                   rounded-xl border border-[#DAD7CD] bg-white
                   text-[#344E41] transition hover:-translate-y-1
-                  hover:border-[#588157] dark:border-[#435449]
+                  hover:border-[#588157] sm:size-10 dark:border-[#435449]
                   dark:bg-[#26362D] dark:text-white
                   dark:hover:border-[#A3B18A]"
               >
@@ -129,10 +129,10 @@ export default function FooterAreaPublica() {
               <a
                 href="mailto:contato@visora.com.br"
                 aria-label="Enviar e-mail"
-                className="flex size-10 items-center justify-center
+                className="flex size-11 items-center justify-center
                   rounded-xl border border-[#DAD7CD] bg-white
                   text-[#344E41] transition hover:-translate-y-1
-                  hover:border-[#588157] dark:border-[#435449]
+                  hover:border-[#588157] sm:size-10 dark:border-[#435449]
                   dark:bg-[#26362D] dark:text-white
                   dark:hover:border-[#A3B18A]"
               >
@@ -158,9 +158,9 @@ export default function FooterAreaPublica() {
 
           <Link
             href="/"
-            className="text-xs font-medium text-[#536258]
+            className="text-center text-xs font-medium text-[#536258]
               transition-colors hover:text-[#344E41]
-              dark:text-[#C4CEC5] dark:hover:text-[#A3B18A]"
+              dark:text-[#C4CEC5] dark:hover:text-[#A3B18A] sm:text-right"
           >
             Feito para transformar dados em decisões.
           </Link>

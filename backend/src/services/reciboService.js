@@ -6,10 +6,6 @@ import { existsSync } from "node:fs";
 
 import { formatarDocumento } from "../utils/documento.js";
 
-// ======================================================
-// 1. CAMINHOS DOS ARQUIVOS
-// ======================================================
-
 const DIRETORIO_ASSETS = fileURLToPath(
   new URL("../assets/", import.meta.url)
 );
@@ -30,10 +26,6 @@ const FONTES = {
   bold: path.join(DIRETORIO_ASSETS, "fonts", "Montserrat-Bold.ttf"),
 };
 
-// ======================================================
-// 2. CORES
-// ======================================================
-
 const CORES = {
   principal: "#273B31",
   escuro: "#344E41",
@@ -46,9 +38,6 @@ const CORES = {
   branco: "#FFFFFF",
 };
 
-// ======================================================
-// 3. FORMATAÇÃO
-// ======================================================
 
 const NOMES_METODO = {
   pix: "PIX",
@@ -72,10 +61,6 @@ const dataBR = (valor) => {
   });
 };
 
-// ======================================================
-// 4. GERAÇÃO DO RECIBO
-// ======================================================
-
 export function gerarReciboPdf(dados, saida) {
   const {
     pagamento,
@@ -85,14 +70,14 @@ export function gerarReciboPdf(dados, saida) {
     empresa,
   } = dados;
 
-  // Validação das fontes.
+
   for (const fonte of Object.values(FONTES)) {
     if (!existsSync(fonte)) {
       throw new Error(`Arquivo de fonte não encontrado: ${fonte}`);
     }
   }
 
-  // Criação do documento A4.
+
   const doc = new PDFDocument({
     size: "A4",
     margin: 42,
@@ -100,7 +85,6 @@ export function gerarReciboPdf(dados, saida) {
 
   doc.pipe(saida);
 
-  // Registro das fontes.
   doc.registerFont("Montserrat", FONTES.regular);
   doc.registerFont("Montserrat-SemiBold", FONTES.semibold);
   doc.registerFont("Montserrat-Bold", FONTES.bold);
@@ -110,10 +94,6 @@ export function gerarReciboPdf(dados, saida) {
 
   const margem = 42;
   const larguraConteudo = largura - margem * 2;
-
-  // ====================================================
-  // 5. CABEÇALHO
-  // ====================================================
 
   if (existsSync(LOGO)) {
     doc.image(LOGO, margem, 35, {
@@ -158,10 +138,6 @@ export function gerarReciboPdf(dados, saida) {
     .strokeColor(CORES.claro)
     .stroke();
 
-  // ====================================================
-  // 6. DESTAQUE DO VALOR
-  // ====================================================
-
   const caixaY = 142;
   const caixaAltura = 82;
 
@@ -188,7 +164,6 @@ export function gerarReciboPdf(dados, saida) {
     .fillColor(CORES.principal)
     .text(moeda(pagamento.valor), margem + 20, caixaY + 29);
 
-  // Confirmação do pagamento.
   doc
     .circle(margem + 23, caixaY + 68, 3)
     .fillColor(CORES.verde)
@@ -200,13 +175,9 @@ export function gerarReciboPdf(dados, saida) {
     .fillColor(CORES.verde)
     .text("Pagamento confirmado", margem + 33, caixaY + 63);
 
-  // ====================================================
-  // 7. SEÇÕES DO RECIBO
-  // ====================================================
 
   doc.y = 250;
 
-  // Títulos das seções.
   function secao(titulo) {
     doc.moveDown(0.35);
 
@@ -228,7 +199,6 @@ export function gerarReciboPdf(dados, saida) {
     doc.y = y + 7;
   }
 
-  // Informações organizadas em duas colunas.
   function linha(rotulo, valor) {
     const textoValor = String(valor ?? "Não informado");
     const y = doc.y;
@@ -237,7 +207,6 @@ export function gerarReciboPdf(dados, saida) {
     const inicioValor = margem + larguraRotulo;
     const larguraValor = larguraConteudo - larguraRotulo;
 
-    // Mede a altura dos textos.
     doc
       .font("Montserrat-SemiBold")
       .fontSize(9);
@@ -254,7 +223,7 @@ export function gerarReciboPdf(dados, saida) {
       width: larguraValor,
     });
 
-    // Rótulo.
+
     doc
       .font("Montserrat-SemiBold")
       .fontSize(9)
@@ -264,7 +233,6 @@ export function gerarReciboPdf(dados, saida) {
         align: "left",
       });
 
-    // Valor.
     doc
       .font("Montserrat")
       .fontSize(9)
@@ -274,13 +242,9 @@ export function gerarReciboPdf(dados, saida) {
         align: "left",
       });
 
-    // Espaçamento entre os campos.
     doc.y = y + Math.max(alturaRotulo, alturaValor) + 5;
   }
 
-  // ====================================================
-  // 8. DETALHES DA TRANSAÇÃO
-  // ====================================================
 
   secao("Detalhes da transação");
 
@@ -298,9 +262,6 @@ export function gerarReciboPdf(dados, saida) {
     NOMES_METODO[pagamento.metodo] ?? pagamento.metodo
   );
 
-  // ====================================================
-  // 9. PLANO CONTRATADO
-  // ====================================================
 
   secao("Plano contratado");
 
@@ -313,19 +274,12 @@ export function gerarReciboPdf(dados, saida) {
     `${dataBR(assinatura.dataInicio)} a ${dataBR(assinatura.dataFim)}`
   );
 
-  // ====================================================
-  // 10. DADOS DO CONTRATANTE
-  // ====================================================
 
   secao("Dados do contratante");
 
   linha("Nome completo:", usuario.nome);
 
   linha("E-mail:", usuario.email);
-
-  // ====================================================
-  // 11. DADOS DA EMPRESA
-  // ====================================================
 
   secao("Dados da empresa");
 
@@ -341,10 +295,6 @@ export function gerarReciboPdf(dados, saida) {
 
   linha("Setor de atuação:", empresa.setorAtuacao);
 
-  // ====================================================
-  // 12. ASSINATURA INSTITUCIONAL
-  // ====================================================
-
   const assinaturaLargura = 200;
   const assinaturaAltura =85;
 
@@ -353,7 +303,6 @@ export function gerarReciboPdf(dados, saida) {
   const rodapeY = altura - 67;
   const assinaturaY = rodapeY - 155;
 
-  // Imagem da assinatura.
   if (existsSync(ASSINATURA)) {
     doc.image(ASSINATURA, assinaturaX, assinaturaY, {
       fit: [assinaturaLargura, assinaturaAltura],
@@ -362,7 +311,6 @@ export function gerarReciboPdf(dados, saida) {
     });
   }
 
-  // Linha de assinatura.
   const linhaAssinaturaY = assinaturaY + assinaturaAltura - 2;
 
   doc
@@ -372,7 +320,6 @@ export function gerarReciboPdf(dados, saida) {
     .strokeColor(CORES.secundario)
     .stroke();
 
-  // Identificação da assinatura.
   doc
     .font("Montserrat-SemiBold")
     .fontSize(8.5)
@@ -402,9 +349,6 @@ export function gerarReciboPdf(dados, saida) {
       }
     );
 
-  // ====================================================
-  // 13. RODAPÉ
-  // ====================================================
 
   doc
     .moveTo(margem, rodapeY - 10)
@@ -441,9 +385,6 @@ export function gerarReciboPdf(dados, saida) {
       }
     );
 
-  // ====================================================
-  // 14. FINALIZAÇÃO
-  // ====================================================
 
   doc.end();
 }

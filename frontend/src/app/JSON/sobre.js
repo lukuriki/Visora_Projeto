@@ -1,7 +1,5 @@
 import { Eye, Target, Lightbulb, ShieldCheck } from "lucide-react";
 
-// Edite os textos à vontade: a página se adapta sozinha.
-// Dica: mantenha cada "texto" com 2 ou 3 frases para a leitura ficar leve.
 export const passosSobre = [
   {
     id: "quem-somos",

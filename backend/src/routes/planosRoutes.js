@@ -1,10 +1,7 @@
 
 import { Router } from "express";
 
-import {
-  listarPlanos,
-  buscarPlanoPorId,
-} from "../controllers/planosController.js";
+import { listarPlanos, buscarPlanoPorId } from "../controllers/planosController.js";
 
 const router = Router();
 

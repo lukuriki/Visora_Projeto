@@ -7,37 +7,119 @@ import { gerarNomeUsuarioBase, gerarSenha } from "../utils/credenciais.js";
 import { gerarToken } from "../utils/tokens.js";
 import { enviarCredenciais } from "./emailService.js";
 
-// Traduz erro de UNIQUE do MySQL para mensagem amigável (chaves = campos do front).
 function traduzirErro(error) {
   if (error.code !== "ER_DUP_ENTRY") return error;
+
   const msg = error.sqlMessage ?? "";
-  if (msg.includes("email")) return new AppError("Este e-mail já está cadastrado.", 409, { emailPessoal: "E-mail já cadastrado." });
-  if (msg.includes("documento_identificacao")) return new AppError("Este CPF/CNPJ já está cadastrado.", 409, { documento: "Documento já cadastrado." });
-  return new AppError("Dados já cadastrados.", 409);
+
+  console.error("Erro de duplicidade:", msg);
+
+  
+  CPF / CNPJ
+  
+  if (msg.includes("documento_identificacao")) {
+    return new AppError(
+      "Este CPF/CNPJ já está cadastrado.",
+      409,
+      { documento: "Este CPF/CNPJ já está cadastrado." }
+    );
+  }
+
+
+  
+  if (msg.includes("usuarios.email") || msg.includes("email_usuario")) {
+    return new AppError(
+      "Este e-mail pessoal já está cadastrado.",
+      409,
+      { emailPessoal: "Este e-mail já está cadastrado." }
+    );
+  }
+
+
+  
+  if (msg.includes("email_empresa")) {
+    return new AppError(
+      "Este e-mail empresarial já está cadastrado.",
+      409,
+      { emailEmpresa: "Este e-mail já está cadastrado." }
+    );
+  }
+
+  
+  if (msg.includes("telefone_usuario")) {
+    return new AppError(
+      "Este telefone pessoal já está cadastrado.",
+      409,
+      { telefonePessoal: "Este telefone já está cadastrado." }
+    );
+  }
+
+
+  
+  if (msg.includes("telefone_empresa")) {
+    return new AppError(
+      "Este telefone empresarial já está cadastrado.",
+      409,
+      { telefoneEmpresa: "Este telefone já está cadastrado." }
+    );
+  }
+
+  if (msg.includes("nome_usuario")) {
+    return new AppError(
+      "Este nome de usuário já está em uso.",
+      409,
+      { nomeUsuario: "Nome de usuário indisponível." }
+    );
+  }
+
+  
+  if (msg.includes("email")) {
+    return new AppError(
+      "Este e-mail já está cadastrado.",
+      409,
+      { emailPessoal: "Este e-mail já está cadastrado." }
+    );
+  }
+
+  
+  return new AppError(
+    "Já existe um cadastro com um dos dados informados.",
+    409
+  );
 }
 
-// nome_usuario único: "joao", senão "joao4821"...
-
-async function gerarNomeUsuarioUnico(conexao, nomeCompleto) {
+async function gerarNomeUsuarioUnico(conexao, nomeCompleto, usuarioId) {
   const base = gerarNomeUsuarioBase(nomeCompleto).slice(0, 26);
 
-  for (let i = 0; i < 30; i++) {
-    const candidato = `${base}${randomInt(1000, 10000)}`;
+  const simbolos = ["&", "@", "#", "$", "!"];
 
-    const [rows] = await conexao.execute(
-      "SELECT 1 FROM usuarios WHERE nome_usuario = ? LIMIT 1",
-      [candidato],
+  const sufixo = `.VSR${String(usuarioId).padStart(4, "0")}`;
+
+  for (let tentativa = 0; tentativa < 100; tentativa++) {
+    const numeros = randomInt(10, 100);
+    const simbolo = simbolos[randomInt(0, simbolos.length)];
+
+    const nomeUsuario = `${base}${numeros}${simbolo}${sufixo}`;
+
+    const [usuarios] = await conexao.execute(
+      `SELECT id
+       FROM usuarios
+       WHERE nome_usuario = ?
+       LIMIT 1`,
+      [nomeUsuario]
     );
 
-    if (rows.length === 0) {
-      return candidato;
+    if (usuarios.length === 0) {
+      return nomeUsuario;
     }
   }
 
-  throw new Error("Não foi possível gerar um nome de usuário único.");
+  throw new AppError(
+    "Não foi possível gerar um nome de usuário único.",
+    409
+  );
 }
 
-// Passos 2-3: e-mail / documento já existem?
 export async function verificarDisponibilidade({ email, documento }) {
   const conflitos = {};
   if (email) {
@@ -51,15 +133,11 @@ export async function verificarDisponibilidade({ email, documento }) {
   return { disponivel: Object.keys(conflitos).length === 0, conflitos };
 }
 
-// "Finalizar compra": cria tudo como PENDENTE, numa transação.
-// criarCobranca (opcional): função do gateway, executada ANTES do commit.
-// Se o gateway falhar, nada fica gravado e o usuário pode tentar de novo.
 export async function criarContratacao({ planoId, metodo, usuario, empresa }, criarCobranca = null) {
   const conexao = await pool.getConnection();
   try {
     await conexao.beginTransaction();
 
-    // O valor vem SEMPRE do banco, nunca do front.
     const [planos] = await conexao.execute(
       "SELECT id, tipo, valor FROM planos WHERE id = ? AND ativo = TRUE",
       [planoId],
@@ -67,8 +145,6 @@ export async function criarContratacao({ planoId, metodo, usuario, empresa }, cr
     if (planos.length === 0) throw new AppError("Plano não encontrado ou indisponível.", 404);
     const plano = planos[0];
 
-    // nome_usuario e senha são NOT NULL, mas só são gerados quando o pagamento
-    // é confirmado. Até lá: valores provisórios.
     const provisorio = `pend_${randomUUID().slice(0, 12)}`;
     const senhaProvisoria = await bcrypt.hash(randomUUID(), 10);
 
@@ -94,8 +170,6 @@ export async function criarContratacao({ planoId, metodo, usuario, empresa }, cr
       [e.insertId, plano.id, plano.valor],
     );
 
-    // UUID aleatório: é ele (e não o id numérico) que o front usa para consultar
-    // o status e baixar o recibo, então ninguém consegue "adivinhar".
     const codigo = randomUUID();
     await conexao.execute(
       "INSERT INTO pagamentos (assinatura_id, valor, metodo, status, codigo_transacao) VALUES (?, ?, ?, 'pendente', ?)",
@@ -121,15 +195,12 @@ export async function criarContratacao({ planoId, metodo, usuario, empresa }, cr
   }
 }
 
-// Pagamento confirmado: ativa tudo, cria o link de ativação e envia o e-mail.
-// (chamado pelo webhook do gateway OU pela confirmação simulada)
 export async function confirmarPagamento(codigo) {
   const conexao = await pool.getConnection();
   let credenciais;
   try {
     await conexao.beginTransaction();
 
-    // FOR UPDATE: webhook repetido ao mesmo tempo espera o primeiro terminar.
     const [rows] = await conexao.execute(
       `SELECT p.id AS pagamento_id, p.status AS pagamento_status,
               a.id AS assinatura_id, a.empresa_id, pl.duracao_meses,
@@ -146,14 +217,17 @@ export async function confirmarPagamento(codigo) {
     if (rows.length === 0) throw new AppError("Pagamento não encontrado.", 404);
     const c = rows[0];
 
-    // Idempotente: confirmar de novo não gera outra senha nem outro e-mail.
     if (c.pagamento_status === "aprovado") {
       await conexao.rollback();
       return { jaConfirmado: true };
     }
     if (c.pagamento_status !== "pendente") throw new AppError("Este pagamento não pode ser confirmado.", 409);
 
-    const nomeUsuario = await gerarNomeUsuarioUnico(conexao, c.nome_completo);
+    const nomeUsuario = await gerarNomeUsuarioUnico(
+      conexao,
+      c.nome_completo,
+      c.usuario_id
+    );
     const { token, hash: tokenHash } = gerarToken();
 
     await conexao.execute("UPDATE pagamentos SET status = 'aprovado', pago_em = NOW() WHERE id = ?", [c.pagamento_id]);
@@ -163,7 +237,6 @@ export async function confirmarPagamento(codigo) {
     );
     await conexao.execute("UPDATE empresas SET status = 'ativa' WHERE id = ?", [c.empresa_id]);
 
-    // A conta do usuário só vira 'ativo' quando ele definir a senha pelo link do e-mail.
     await conexao.execute("UPDATE usuarios SET nome_usuario = ? WHERE id = ?", [nomeUsuario, c.usuario_id]);
     await conexao.execute(
       "INSERT INTO tokens_usuario (usuario_id, tipo, token_hash, expira_em) VALUES (?, 'verificacao_email', ?, DATE_ADD(NOW(), INTERVAL 48 HOUR))",
@@ -186,7 +259,6 @@ export async function confirmarPagamento(codigo) {
     conexao.release();
   }
 
-  // E-mail FORA da transação: se o SMTP falhar, o pagamento continua confirmado.
   try {
     await enviarCredenciais(credenciais);
   } catch (error) {
@@ -195,8 +267,6 @@ export async function confirmarPagamento(codigo) {
   return { jaConfirmado: false };
 }
 
-// Dados da tela final e do recibo (no formato que o reciboService espera).
-// NUNCA devolve a senha.
 export async function buscarResumo(codigo) {
   const [rows] = await pool.execute(
     `SELECT p.id AS pagamento_id, p.codigo_transacao, p.metodo, p.status AS pagamento_status, p.valor, p.pago_em,
@@ -224,7 +294,7 @@ export async function buscarResumo(codigo) {
     empresa: { razaoSocial: r.razao_social, tipoDocumento: r.tipo_documento, documento: r.documento_identificacao, setorAtuacao: r.setor_atuacao },
   };
 }
-// Dados do gateway de uma contratação (uso interno: webhook e consulta de status).
+
 export async function buscarGateway(codigo) {
   const [rows] = await pool.execute(
     "SELECT gateway_id, gateway_url, metodo, status FROM pagamentos WHERE codigo_transacao = ?",

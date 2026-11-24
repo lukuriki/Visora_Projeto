@@ -1,5 +1,3 @@
-// Rode dentro da pasta backend:  node scripts/criar-chave-pix.mjs
-// Cadastra uma chave Pix aleatória (EVP) na conta do Asaas SANDBOX, usando o ASAAS_API_KEY do .env.
 import "dotenv/config";
 
 const env = process.env;
@@ -23,12 +21,6 @@ async function chamar(metodo, caminho, corpo) {
   });
   return { ok: r.ok, status: r.status, corpo: await r.json().catch(() => null) };
 }
-
-const dica = `
-Se o sandbox não permitir criar a chave por aqui:
-  - tente pelo painel do sandbox (menu Pix -> chaves); ou
-  - teste com Boleto ou Cartão (não exigem chave Pix); ou
-  - use PAGAMENTO_MODO=simulado no .env para a apresentação.`;
 
 try {
   const lista = await chamar("GET", "/pix/addressKeys");

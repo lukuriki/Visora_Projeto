@@ -2,6 +2,8 @@ import cors from "cors";
 import express from "express";
 import helmet from "helmet";
 
+import { rateLimit } from "express-rate-limit";
+
 import { errorHandler } from "./middlewares/errorHandler.js";
 import healthRoutes from "./routes/healthRoutes.js";
 
@@ -10,7 +12,19 @@ import contratacaoRoutes from "./routes/contratacaoRoutes.js";
 import contasRoutes from "./routes/contasRoutes.js";
 import webhookRoutes from "./routes/webhookRoutes.js";
 import conversasRoutes from "./routes/conversasRoutes.js";
-
+import assinaturasRoutes from "./routes/assinaturasRoutes.js";
+import equipeRoutes from "./routes/equipeRoutes.js";
+import informacoesContabeisRoutes from "./routes/informacoesContabeisRoutes.js";
+import movimentacoesBancariasRoutes from "./routes/movimentacoesBancariasRoutes.js";
+import patrimonioRoutes from "./routes/patrimonioRoutes.js";
+import emprestimosRoutes from "./routes/emprestimosRoutes.js";
+import investimentosRoutes from "./routes/investimentosRoutes.js";
+import analisesRoutes from "./routes/analisesRoutes.js";
+import adminRoutes from "./routes/adminRoutes.js";
+import iaRotas from "./routes/iaRotas.js";
+import auditoriaRotas from "./routes/auditoriaRotas.js";
+import auditoriaChatRoutes from "./routes/auditoriaChatRoutes.js";
+import empresasRoutes from "./routes/empresasRoutes.js";
 
 const app = express();
 
@@ -27,13 +41,60 @@ app.get("/", (request, response) => {
     message: "API do projeto base",
   });
 });
+ 
+
+const limitarRecuperacaoCredenciais = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  limit: 5,
+  standardHeaders: "draft-8",
+  legacyHeaders: false,
+
+  message: {
+    sucesso: false,
+    mensagem:
+      "Muitas solicitações. Aguarde 15 minutos e tente novamente.",
+  },
+});
+
+
+app.use(
+  "/api/contas/esqueceu-usuario",
+  limitarRecuperacaoCredenciais
+);
+
+app.use(
+  "/api/contas/esqueceu-senha",
+  limitarRecuperacaoCredenciais
+);
+
+app.use(
+  "/api/contas/redefinir-senha",
+  limitarRecuperacaoCredenciais
+);
+
+
+
+app.use("/api/contas", contasRoutes);
+
 
 app.use("/api/health", healthRoutes);
 app.use("/api/planos", planosRoutes);
 app.use("/api/contratacoes", contratacaoRoutes);
-app.use("/api/contas", contasRoutes);
 app.use("/api/webhooks", webhookRoutes);
 app.use("/api/conversas", conversasRoutes);
+app.use("/api/assinaturas", assinaturasRoutes);
+app.use("/api/equipe", equipeRoutes);
+app.use("/api/informacoes-contabeis",informacoesContabeisRoutes);
+app.use("/api/movimentacoes-bancarias", movimentacoesBancariasRoutes);
+app.use("/api/patrimonio", patrimonioRoutes);
+app.use("/api/emprestimos", emprestimosRoutes);
+app.use("/api/investimentos", investimentosRoutes);
+app.use("/api/analises", analisesRoutes);
+app.use("/api/admin", adminRoutes);
+app.use("/api", iaRotas);
+app.use("/api", auditoriaRotas);
+app.use("/api/auditoria", auditoriaChatRoutes);
+app.use("/api/empresas", empresasRoutes);
 
 app.use(errorHandler);
 

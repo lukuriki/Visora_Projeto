@@ -43,10 +43,21 @@ export async function iniciarContratacao(request, response, next) {
     };
 
     if (emAsaas) {
-      resposta.urlPagamento = contratacao.gateway.url;
-      if (contratacao.gateway.pix) resposta.pix = contratacao.gateway.pix;
+      const gateway = contratacao.gateway;
+      resposta.urlPagamento = gateway.url;
+
+      if (gateway.pix) {
+        resposta.pix = gateway.pix;
+      }
+
+      if (gateway.boleto) {
+        resposta.boleto = gateway.boleto;
+      }
+
+      if (gateway.cartao) {
+        resposta.cartao = gateway.cartao;
+      }
     } else if (dados.metodo.startsWith("cartao")) {
-      // Simulação: cartão aprova na hora.
       await confirmarPagamento(contratacao.codigo);
       resposta.status = "aprovado";
     } else if (dados.metodo === "pix") {
@@ -75,7 +86,7 @@ export async function consultarContratacao(request, response, next) {
             resumo = await buscarResumo(codigo);
           }
         } catch (error) {
-          console.error("[pagamento] consulta ao gateway falhou:", error.message); // tenta de novo no próximo ciclo
+          console.error("[pagamento] consulta ao gateway falhou:", error.message); 
         }
       }
     }

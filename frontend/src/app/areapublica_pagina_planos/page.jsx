@@ -13,7 +13,6 @@ import FooterAreaPublica from "@/components/FooterAreaPublica";
 import HeaderAreaPublica from "@/components/HeaderAreaPublica";
 import { buscarPlanos } from "@/lib/api";
 
-/* Preço com centavos menores. */
 function Preco({ valor }) {
   const [inteiro, centavos] = Number(valor).toFixed(2).split(".");
 
@@ -30,7 +29,13 @@ function Preco({ valor }) {
   );
 }
 
-/* Anima o número quando ele aparece na tela. */
+const LIMITES_EMPRESAS = {
+  1: 2,  
+  3: 4,  
+  6: 6,  
+  12: 8, 
+};
+
 function NumeroAnimado({ valor, sufixo = "" }) {
   const referencia = useRef(null);
   const visivel = useInView(referencia, { once: true, margin: "-80px" });
@@ -278,6 +283,31 @@ export default function PaginaPublicaPaginaPlanos() {
                 <h3 className={`relative mb-4 text-sm font-semibold ${destaque ? "text-white" : ""}`}>O que está incluído:</h3>
 
                 <ul className="relative flex flex-col gap-3.5 text-sm">
+                  {/* LIMITE DE EMPRESAS */}
+                  <li className="flex items-center gap-3">
+                    <span
+                      className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-full ${
+                        destaque
+                          ? "bg-[#A3B18A]/25 text-[#DCE6D1]"
+                          : "bg-[#588157]/15 text-[#3A5A40] dark:bg-[#588157]/25 dark:text-[#A3B18A]"
+                      }`}
+                    >
+                      <Check size={13} strokeWidth={3} />
+                    </span>
+
+                    <span
+                      className={` ${
+                        destaque
+                          ? "text-[#E5EDE5]"
+                          : "text-[#344E41] dark:text-[#E5EDE5]"
+                      }`}
+                    >
+                      {LIMITES_EMPRESAS[plano.meses]
+                        ? `Cadastro de até ${LIMITES_EMPRESAS[plano.meses]} empresas`
+                        : "Consulte o limite de empresas"}
+                    </span>
+                  </li>
+
                   <li className="flex items-center gap-3">
                     <span className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-full ${destaque ? "bg-[#A3B18A]/25 text-[#DCE6D1]" : "bg-[#588157]/15 text-[#3A5A40] dark:bg-[#588157]/25 dark:text-[#A3B18A]"}`}><Check size={13} strokeWidth={3} /></span>
                     <span className={destaque ? "text-[#E5EDE5]" : "text-[#344E41] dark:text-[#E5EDE5]"}>Acesso completo à Visora</span>
@@ -445,250 +475,251 @@ export default function PaginaPublicaPaginaPlanos() {
       </section>
 
 
-{/* CONTATO */}
-<motion.div
+      {/* CONTATO */}
+      <motion.div className="relative flex w-full items-center overflow-hidden bg-[#172B22] px-5 py-16 text-white sm:px-8 sm:py-20 md:px-12 xl:min-h-[650px] xl:px-16 2xl:px-20">
+        {/* LUZES DE FUNDO */}
+        <motion.div
+          animate={reduzirMovimento ? undefined : {
+            x: [0, 50, 0],
+            y: [0, -30, 0],
+            scale: [1, 1.2, 1],
+          }}
+          transition={{ duration: 12, repeat: Infinity, ease: "easeInOut" }}
+          className="pointer-events-none absolute -right-20 -top-40 z-0 h-[300px] w-[300px] rounded-full bg-[#588157]/30 blur-[100px] sm:h-[450px] sm:w-[450px]"
+        />
 
-  className="relative flex min-h-[650px] w-full items-center overflow-hidden bg-[#172B22] px-8 py-20 text-white md:px-12 lg:px-16 xl:px-20"
->
-  {/* LUZES DE FUNDO */}
-  <motion.div
-    animate={reduzirMovimento ? undefined : {
-      x: [0, 50, 0],
-      y: [0, -30, 0],
-      scale: [1, 1.2, 1],
-    }}
-    transition={{ duration: 12, repeat: Infinity, ease: "easeInOut" }}
-    className="pointer-events-none absolute -right-20 -top-40 z-0 h-[450px] w-[450px] rounded-full bg-[#588157]/30 blur-[100px]"
-  />
+        <motion.div
+          animate={reduzirMovimento ? undefined : {
+            x: [0, -40, 0],
+            y: [0, 30, 0],
+          }}
+          transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
+          className="pointer-events-none absolute -bottom-48 -left-20 z-0 h-[280px] w-[280px] rounded-full bg-[#A3B18A]/15 blur-[100px] sm:h-[400px] sm:w-[400px]"
+        />
 
-  <motion.div
-    animate={reduzirMovimento ? undefined : {
-      x: [0, -40, 0],
-      y: [0, 30, 0],
-    }}
-    transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
-    className="pointer-events-none absolute -bottom-48 -left-20 z-0 h-[400px] w-[400px] rounded-full bg-[#A3B18A]/15 blur-[100px]"
-  />
+        {/* LINHAS DECORATIVAS */}
+        <div
+          className="pointer-events-none absolute inset-0 z-0 opacity-[0.07]"
+          style={{
+            backgroundImage:
+              "linear-gradient(rgba(255,255,255,0.3) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.3) 1px, transparent 1px)",
+            backgroundSize: "45px 45px",
+          }}
+        />
 
-  {/* LINHAS DECORATIVAS */}
-  <div
-    className="pointer-events-none absolute inset-0 z-0 opacity-[0.07]"
-    style={{
-      backgroundImage:
-        "linear-gradient(rgba(255,255,255,0.3) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.3) 1px, transparent 1px)",
-      backgroundSize: "45px 45px",
-    }}
-  />
+        {/* IMAGEM: fundo suave no mobile/tablet, lateral direita no desktop largo */}
+        <div className="pointer-events-none absolute inset-0 xl:inset-y-0 xl:left-auto xl:right-[-50px] xl:w-[40%]">
 
-  {/* IMAGEM OCUPANDO TODA A ALTURA À DIREITA */}
-  <div className="pointer-events-none absolute inset-y-0 right-[-50px] w-[40%]">
-
-    {/* AURA */}
-    <motion.div
-      animate={
-        reduzirMovimento
-          ? undefined
-          : {
-              scale: [1, 1.2, 1],
-              opacity: [0.3, 0.55, 0.3],
+          {/* AURA */}
+          <motion.div
+            animate={
+              reduzirMovimento
+                ? undefined
+                : {
+                    scale: [1, 1.2, 1],
+                    opacity: [0.3, 0.55, 0.3],
+                  }
             }
-      }
-      transition={{
-        duration: 7,
-        repeat: Infinity,
-        ease: "easeInOut",
-      }}
-      className="absolute right-0 top-1/2 h-[full] w-[500px] -translate-y-1/2 rounded-full bg-[#588157]/40 blur-[110px]"
-    />
-
-    {/* IMAGEM */}
-    <motion.div
-      initial={{ opacity: 0, x: 50 }}
-      whileInView={{ opacity: 1, x: 0 }}
-      viewport={{ once: true }}
-      transition={{ duration: 1.2 }}
-      className="absolute inset-0"
-      
-    >
-      <Image
-  src="/areapublica_pagina_planos_contato.png"
-  alt="Visualização da plataforma Visora"
-  fill
-  priority
-  sizes="(max-width: 768px) 100vw, 50vw"
-  className="object-cover object-right opacity-100"
-/>
-    </motion.div>
-
-    {/* DEGRADÊ HORIZONTAL */}
-    <div className="absolute inset-0 bg-gradient-to-r from-[#172B22] via-[#172B22]/25 to-transparent" />
-
-    {/* DEGRADÊ VERTICAL */}
-    <div className="absolute inset-0 bg-gradient-to-t from-[#172B22]/0 via-transparent to-[#172B22]/25" />
-
-  </div>
-
-  {/* CONTEÚDO PRINCIPAL */}
-  <div className="relative z-10 mx-auto grid w-full max-w-[1600px] items-center gap-12 lg:grid-cols-[1.1fr_0.9fr] lg:pr-[25%] xl:gap-8">
-
-    {/* 1. TEXTO */}
-    <div className="relative z-10">
-      <motion.div
-          initial={{ opacity: 0, x: -50 }}
-      whileInView={{ opacity: 1, x: 0 }}
-      viewport={{ once: true }}
-      transition={{ duration: 1.2 }}
-        className="mb-8 inline-flex items-center gap-3 rounded-full border border-[#A3B18A]/30 bg-white/[0.06] px-4 py-2"
-      >
-        <span className="relative flex h-2.5 w-2.5">
-          <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#A3B18A] opacity-75" />
-          <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-[#A3B18A]" />
-        </span>
-
-        <span className="text-xs font-semibold tracking-[0.18em] text-[#C5D2B5]">
-          VAMOS CONVERSAR?
-        </span>
-      </motion.div>
-
-      <motion.div    initial={{ opacity: 0, x: -50 }}
-  whileInView={{ opacity: 1, x: 0 }}
-  viewport={{ once: true }}
-  transition={{ duration: 0.8 }}>
-      <h2 className="text-4xl font-bold leading-[1.12] tracking-tight md:text-5xl xl:text-6xl">
-        Sua próxima grande
-        <span className="mt-2 block text-[#A3B18A]">
-          decisão começa aqui.
-        </span>
-      </h2>
-
-      <p className="mt-7 max-w-xl text-base leading-8 text-[#DAD7CD]/75">
-        Transforme informações em oportunidades. Descubra como a Visora
-        pode tornar sua gestão mais inteligente, estratégica e eficiente.
-      </p>
-</motion.div>
-      <motion.div    initial={{ opacity: 0, x: -50 }}
-  whileInView={{ opacity: 1, x: 0 }}
-  viewport={{ once: true }}
-  transition={{ duration: 0.8 }} className="mt-10 flex flex-wrap items-center gap-5">
-        <Link 
-          href="/areapublica_pagina_contato"
-          className="group relative inline-flex items-center gap-3 overflow-hidden rounded-xl bg-[#A3B18A] px-7 py-4 font-bold text-[#172B22] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_15px_40px_rgba(163,177,138,0.25)]"
-        >
-          <span className="absolute inset-0 -translate-x-full bg-white/30 transition-transform duration-700 group-hover:translate-x-full" />
-
-          <span className="relative">Entre em contato</span>
-
-          <ArrowRight
-            size={19}
-            className="relative transition-transform duration-300 group-hover:translate-x-2"
+            transition={{
+              duration: 7,
+              repeat: Infinity,
+              ease: "easeInOut",
+            }}
+            className="absolute right-0 top-1/2 hidden h-full w-[500px] -translate-y-1/2 rounded-full bg-[#588157]/40 blur-[110px] xl:block"
           />
-        </Link>
-      </motion.div>
-    </div>
 
-    {/* 2. PAINEL DE INDICADORES */}
-    <motion.div
-  initial={{ opacity: 0, y: 60 }}
-  whileInView={{ opacity: 1, y: 0 }}
-  viewport={{ once: true, amount: 0.3 }}
-  transition={{ duration: 0.8, ease: "easeOut" }}
-  className="relative flex h-[360px] w-full max-w-[350px] items-center justify-center"
->
-
-      {/* CÍRCULOS ORBITAIS */}
-      <motion.div 
-      
-        animate={reduzirMovimento ? undefined : { rotate: 360 }}
-        transition={{ duration: 30, repeat: Infinity, ease: "linear" }}
-        className="absolute h-[300px] w-[300px] rounded-full border border-dashed border-[#A3B18A]/30"
-      />
-
-      <motion.div
-        animate={reduzirMovimento ? undefined : { rotate: -360 }}
-        transition={{ duration: 22, repeat: Infinity, ease: "linear" }}
-        className="absolute h-[235px] w-[235px] rounded-full border border-[#A3B18A]/20"
-      >
-        <span className="absolute -top-2 left-1/2 h-4 w-4 rounded-full bg-[#A3B18A] shadow-[0_0_20px_#A3B18A]" />
-
-        <span className="absolute -bottom-2 right-10 h-3 w-3 rounded-full bg-[#588157] shadow-[0_0_18px_#588157]" />
-      </motion.div>
-
-      {/* PAINEL CENTRAL */}
-      <motion.div
-        animate={reduzirMovimento ? undefined : { y: [0, -12, 0] }}
-        transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
-        className="relative z-10 flex h-48 w-56 flex-col justify-between rounded-2xl border border-[#A3B18A]/30 bg-[#273B31]/90 p-5 shadow-[0_25px_80px_rgba(0,0,0,0.35)] backdrop-blur-xl"
-      >
-        <div className="flex items-center justify-between">
-          <span className="text-xs font-semibold tracking-wider text-[#C5D2B5]">
-            VISORA INSIGHTS
-          </span>
-
-          <span className="h-2 w-2 rounded-full bg-[#A3B18A] shadow-[0_0_10px_#A3B18A]" />
-        </div>
-
-        <div>
-          <span className="text-xs text-white/50">
-            Visão estratégica
-          </span>
-
-          <div className="mt-1 text-3xl font-bold text-white">
-            +32,8%
-          </div>
-        </div>
-
-        <div className="flex h-22 items-end gap-2">
-          {[25, 42, 32, 60, 45, 75, 58, 95, 70, 100].map((altura, i) => (
-            <motion.div
-              key={i}
-              initial={{ height: "10%" }}
-              whileInView={{ height: `${altura}%` }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.8, delay: 0.3 + i * 0.08 }}
-              className="flex-1 rounded-t-sm bg-gradient-to-t from-[#588157] to-[#A3B18A]"
+          {/* IMAGEM */}
+          <motion.div
+            initial={{ opacity: 0, x: 50 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 1.2 }}
+            className="absolute inset-0"
+          >
+            <Image
+              src="/areapublica_pagina_planos_contato.png"
+              alt="Visualização da plataforma Visora"
+              fill
+              priority
+              sizes="(max-width: 1280px) 100vw, 40vw"
+              className="object-cover object-[75%_center] opacity-25 sm:opacity-30 xl:object-right xl:opacity-100"
             />
-          ))}
+          </motion.div>
+
+          {/* ESCURECIMENTO PARA LEITURA (mobile/tablet) */}
+          <div className="absolute inset-0 bg-[#172B22]/55 xl:hidden" />
+
+          {/* DEGRADÊ HORIZONTAL (desktop largo) */}
+          <div className="absolute inset-0 hidden bg-gradient-to-r from-[#172B22] via-[#172B22]/25 to-transparent xl:block" />
+
+          {/* DEGRADÊ VERTICAL */}
+          <div className="absolute inset-0 bg-gradient-to-t from-[#172B22]/0 via-transparent to-[#172B22]/25" />
+
+        </div>
+
+        {/* CONTEÚDO PRINCIPAL */}
+        <div className="relative z-10 mx-auto grid w-full max-w-[1600px] items-center gap-12 xl:grid-cols-[1.1fr_0.9fr] xl:gap-8 xl:pr-[25%]">
+
+          {/* 1. TEXTO */}
+          <div className="relative z-10 text-center sm:text-left">
+            <motion.div
+              initial={{ opacity: 0, x: -50 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 1.2 }}
+              className="mb-6 inline-flex items-center gap-3 rounded-full border border-[#A3B18A]/30 bg-white/[0.06] px-4 py-2 sm:mb-8"
+            >
+              <span className="relative flex h-2.5 w-2.5">
+                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#A3B18A] opacity-75" />
+                <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-[#A3B18A]" />
+              </span>
+
+              <span className="text-xs font-semibold tracking-[0.18em] text-[#C5D2B5]">
+                VAMOS CONVERSAR?
+              </span>
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, x: -50 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.8 }}
+            >
+              <h2 className="text-balance text-3xl font-bold leading-[1.12] tracking-tight sm:text-4xl md:text-5xl 2xl:text-6xl">
+                Sua próxima grande
+                <span className="mt-2 block text-[#A3B18A]">
+                  decisão começa aqui.
+                </span>
+              </h2>
+
+              <p className="mx-auto mt-6 max-w-xl text-base leading-7 text-[#DAD7CD]/80 sm:mx-0 sm:mt-7 sm:leading-8 sm:text-[#DAD7CD]/75">
+                Transforme informações em oportunidades. Descubra como a Visora
+                pode tornar sua gestão mais inteligente, estratégica e eficiente.
+              </p>
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, x: -50 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.8 }}
+              className="mt-8 flex flex-wrap items-center justify-center gap-5 sm:mt-10 sm:justify-start"
+            >
+              <Link
+                href="/areapublica_pagina_contato"
+                className="group relative inline-flex w-full items-center justify-center gap-3 overflow-hidden rounded-xl bg-[#A3B18A] px-7 py-4 font-bold text-[#172B22] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_15px_40px_rgba(163,177,138,0.25)] sm:w-auto"
+              >
+                <span className="absolute inset-0 -translate-x-full bg-white/30 transition-transform duration-700 group-hover:translate-x-full" />
+
+                <span className="relative">Entre em contato</span>
+
+                <ArrowRight
+                  size={19}
+                  className="relative transition-transform duration-300 group-hover:translate-x-2"
+                />
+              </Link>
+            </motion.div>
+          </div>
+
+          {/* 2. PAINEL DE INDICADORES */}
+          <motion.div
+            initial={{ opacity: 0, y: 60 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.3 }}
+            transition={{ duration: 0.8, ease: "easeOut" }}
+            className="relative mx-auto flex h-[360px] w-full max-w-[350px] origin-center scale-[0.88] items-center justify-center sm:scale-100 xl:mx-0"
+          >
+
+            {/* CÍRCULOS ORBITAIS */}
+            <motion.div
+              animate={reduzirMovimento ? undefined : { rotate: 360 }}
+              transition={{ duration: 30, repeat: Infinity, ease: "linear" }}
+              className="absolute h-[300px] w-[300px] rounded-full border border-dashed border-[#A3B18A]/30"
+            />
+
+            <motion.div
+              animate={reduzirMovimento ? undefined : { rotate: -360 }}
+              transition={{ duration: 22, repeat: Infinity, ease: "linear" }}
+              className="absolute h-[235px] w-[235px] rounded-full border border-[#A3B18A]/20"
+            >
+              <span className="absolute -top-2 left-1/2 h-4 w-4 rounded-full bg-[#A3B18A] shadow-[0_0_20px_#A3B18A]" />
+
+              <span className="absolute -bottom-2 right-10 h-3 w-3 rounded-full bg-[#588157] shadow-[0_0_18px_#588157]" />
+            </motion.div>
+
+            {/* PAINEL CENTRAL */}
+            <motion.div
+              animate={reduzirMovimento ? undefined : { y: [0, -12, 0] }}
+              transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
+              className="relative z-10 flex h-48 w-56 flex-col justify-between rounded-2xl border border-[#A3B18A]/30 bg-[#273B31]/90 p-5 shadow-[0_25px_80px_rgba(0,0,0,0.35)] backdrop-blur-xl"
+            >
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-semibold tracking-wider text-[#C5D2B5]">
+                  VISORA INSIGHTS
+                </span>
+
+                <span className="h-2 w-2 rounded-full bg-[#A3B18A] shadow-[0_0_10px_#A3B18A]" />
+              </div>
+
+              <div>
+                <span className="text-xs text-white/50">
+                  Visão estratégica
+                </span>
+
+                <div className="mt-1 text-3xl font-bold text-white">
+                  +32,8%
+                </div>
+              </div>
+
+              <div className="flex h-22 items-end gap-2">
+                {[25, 42, 32, 60, 45, 75, 58, 95, 70, 100].map((altura, i) => (
+                  <motion.div
+                    key={i}
+                    initial={{ height: "10%" }}
+                    whileInView={{ height: `${altura}%` }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.8, delay: 0.3 + i * 0.08 }}
+                    className="flex-1 rounded-t-sm bg-gradient-to-t from-[#588157] to-[#A3B18A]"
+                  />
+                ))}
+              </div>
+            </motion.div>
+
+            {/* CARD FLUTUANTE SUPERIOR */}
+            <motion.div
+              animate={reduzirMovimento ? undefined : { y: [0, -10, 0], x: [0, 5, 0] }}
+              transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+              className="absolute right-0 top-5 z-20 flex items-center gap-3 rounded-xl border border-white/10 bg-[#30483A]/95 px-3 py-3 shadow-xl backdrop-blur-lg sm:-right-2"
+            >
+              <div className="rounded-lg bg-[#A3B18A]/15 p-2 text-[#A3B18A]">
+                <TrendingUp size={20} />
+              </div>
+
+              <div>
+                <p className="text-[10px] text-white/50">Desempenho</p>
+                <p className="text-sm font-bold text-white">Em evolução</p>
+              </div>
+            </motion.div>
+
+            {/* CARD FLUTUANTE INFERIOR */}
+            <motion.div
+              animate={reduzirMovimento ? undefined : { y: [0, 10, 0], x: [0, -5, 0] }}
+              transition={{ duration: 4.5, repeat: Infinity, ease: "easeInOut" }}
+              className="absolute -bottom-1 left-0 z-20 flex items-center gap-3 rounded-xl border border-white/10 bg-[#30483A]/95 px-3 py-3 shadow-xl backdrop-blur-lg sm:-left-2"
+            >
+              <div className="rounded-lg bg-[#A3B18A]/15 p-2 text-[#A3B18A]">
+                <BarChart3 size={20} />
+              </div>
+
+              <div>
+                <p className="text-[10px] text-white/50">Inteligência</p>
+                <p className="text-sm font-bold text-white">Dados conectados</p>
+              </div>
+            </motion.div>
+
+          </motion.div>
         </div>
       </motion.div>
-
-      {/* CARD FLUTUANTE SUPERIOR */}
-      <motion.div
-        animate={reduzirMovimento ? undefined : { y: [0, -10, 0], x: [0, 5, 0] }}
-        transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-        className="absolute -right-2 top-5 z-20 flex items-center gap-3 rounded-xl border border-white/10 bg-[#30483A]/95 px-3 py-3 shadow-xl backdrop-blur-lg"
-      >
-        <div className="rounded-lg bg-[#A3B18A]/15 p-2 text-[#A3B18A]">
-          <TrendingUp size={20} />
-        </div>
-
-        <div>
-          <p className="text-[10px] text-white/50">Desempenho</p>
-          <p className="text-sm font-bold text-white">Em evolução</p>
-        </div>
-      </motion.div>
-
-      {/* CARD FLUTUANTE INFERIOR */}
-      <motion.div
-        animate={reduzirMovimento ? undefined : { y: [0, 10, 0], x: [0, -5, 0] }}
-        transition={{ duration: 4.5, repeat: Infinity, ease: "easeInOut" }}
-        className="absolute -bottom-1 -left-2 z-20 flex items-center gap-3 rounded-xl border border-white/10 bg-[#30483A]/95 px-3 py-3 shadow-xl backdrop-blur-lg"
-      >
-        <div className="rounded-lg bg-[#A3B18A]/15 p-2 text-[#A3B18A]">
-          <BarChart3 size={20} />
-        </div>
-
-        <div>
-          <p className="text-[10px] text-white/50">Inteligência</p>
-          <p className="text-sm font-bold text-white">Dados conectados</p>
-        </div>
-      </motion.div>
-
-    </motion.div>
-  </div>
-</motion.div>
-
-
-
 
     </main>
 

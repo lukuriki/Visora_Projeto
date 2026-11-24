@@ -32,9 +32,6 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Mail, MapPin, Phone, Send } from "lucide-react";
 
-/* ==========================================================================
-   FUNDO DE PARTÍCULAS
-   ========================================================================== */
 
 const CORES_PARTICULAS = {
   claro: { ponto: "58,90,64", linha: "88,129,87", alpha: 0.48 },
@@ -214,10 +211,6 @@ function FundoParticulas({ className = "" }) {
     </div>
   );
 }
-
-/* ==========================================================================
-   TÍTULO ANIMADO
-   ========================================================================== */
 
 const TAMANHOS_TITULO = {
   grande: {
@@ -401,9 +394,6 @@ function TituloAurora({
   );
 }
 
-/* ==========================================================================
-   ANIMAÇÕES AUXILIARES
-   ========================================================================== */
 
 function Revelar({
   children,
@@ -584,9 +574,6 @@ function ItemContato({ icone: Icone, titulo, children }) {
   );
 }
 
-/* ==========================================================================
-   PÁGINA DE CONTATO
-   ========================================================================== */
 
 export default function AreaPublicaPaginaContato() {
   const { scrollYProgress } = useScroll();
@@ -664,7 +651,7 @@ export default function AreaPublicaPaginaContato() {
         className="fixed inset-x-0 top-0 z-[60] h-1 origin-left bg-gradient-to-r from-[#588157] via-[#A3B18A] to-[#588157]"
       />
 
-      <div className="relative isolate overflow-hidden">
+      <div className="relative isolate overflow-hidden py-10">
         <FundoParticulas />
 
         <div className="container mx-auto px-4 py-24 md:px-6 lg:py-32 2xl:max-w-[1400px]">

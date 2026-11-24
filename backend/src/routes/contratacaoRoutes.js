@@ -1,12 +1,6 @@
 import { Router } from "express";
 
-import {
-  baixarRecibo,
-  confirmarSimulado,
-  consultarContratacao,
-  iniciarContratacao,
-  validarDisponibilidade,
-} from "../controllers/contratacaoController.js";
+import { baixarRecibo, confirmarSimulado, consultarContratacao, iniciarContratacao, validarDisponibilidade } from "../controllers/contratacaoController.js";
 
 const router = Router();
 

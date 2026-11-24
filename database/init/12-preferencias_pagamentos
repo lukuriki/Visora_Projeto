@@ -1,0 +1,9 @@
+use visora_db;
+
+CREATE TABLE IF NOT EXISTS preferencias_pagamento (
+    id INT AUTO_INCREMENT PRIMARY KEY, 
+    empresa_id INT NOT NULL UNIQUE,
+    metodo_preferido ENUM('pix','cartao_credito','boleto') NOT NULL DEFAULT 'pix',
+    atualizado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    CONSTRAINT fk_preferencias_empresa FOREIGN KEY (empresa_id) REFERENCES empresas(id) ON DELETE CASCADE
+) ENGINE=InnoDB;

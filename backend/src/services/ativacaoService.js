@@ -17,19 +17,26 @@ export async function ativarConta({ token }) {
     await conexao.beginTransaction();
 
     const [rows] = await conexao.execute(
-      `SELECT
-          t.id AS token_id,
-          u.id AS usuario_id,
-          u.nome_usuario
-       FROM tokens_usuario t
-       JOIN usuarios u ON u.id = t.usuario_id
-       WHERE t.token_hash = ?
-         AND t.tipo = 'verificacao_email'
-         AND t.usado_em IS NULL
-         AND t.expira_em > NOW()
-       FOR UPDATE`,
-      [hashToken(token)],
-    );
+  `SELECT
+      t.id AS token_id,
+      u.id AS usuario_id,
+      u.nome_usuario,
+      ue.empresa_id
+   FROM tokens_usuario t
+   JOIN usuarios u
+     ON u.id = t.usuario_id
+   JOIN usuario_empresa ue
+     ON ue.usuario_id = u.id
+     AND ue.perfil_acesso = 'proprietario'
+   WHERE t.token_hash = ?
+     AND t.tipo = 'verificacao_email'
+     AND t.usado_em IS NULL
+     AND t.expira_em > NOW()
+   ORDER BY ue.empresa_id ASC
+   LIMIT 1
+   FOR UPDATE`,
+  [hashToken(token)]
+);
 
     if (rows.length === 0) {
       throw new AppError("Link inválido, expirado ou já utilizado.", 400);
@@ -37,10 +44,8 @@ export async function ativarConta({ token }) {
 
     const usuario = rows[0];
 
-    // Gera uma senha aleatória de 16 caracteres.
-    const senha = gerarSenha(16);
+    const senha = gerarSenha(10, usuario.empresa_id);
 
-    // Armazena somente o hash da senha.
     const senhaHash = await bcrypt.hash(senha, 10);
 
     await conexao.execute(
@@ -50,7 +55,6 @@ export async function ativarConta({ token }) {
       [senhaHash, usuario.usuario_id],
     );
 
-    // Impede que o mesmo link seja utilizado novamente.
     await conexao.execute(
       "UPDATE tokens_usuario SET usado_em = NOW() WHERE id = ?",
       [usuario.token_id],
@@ -58,7 +62,6 @@ export async function ativarConta({ token }) {
 
     await conexao.commit();
 
-    // A senha original é retornada somente nesta resposta.
     return {
       nomeUsuario: usuario.nome_usuario,
       senha,

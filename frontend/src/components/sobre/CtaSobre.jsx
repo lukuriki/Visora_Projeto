@@ -9,22 +9,27 @@ export default function CtaSobre() {
 
   return (
     <section>
-      <div className="mx-auto w-full max-w-full">
-        {/* Card do CTA */}
-        <div className="relative isolate overflow-hidden border border-[#17231B]/5 bg-gradient-to-br from-[#F2F2F2] to-[#E5E5E5] px-6 pt-12 pb-12 shadow-xl dark:border-[#F2F2F2]/5 dark:from-[#111A14] dark:to-[#16221A] sm:px-16 sm:pt-16 lg:grid lg:grid-cols-2 lg:gap-x-12 lg:px-70 lg:py-20">
+      {/* Container com limite máximo de largura para não esticar ao infinito em monitores Ultrawide */}
+      <div className="mx-auto w-full max-w-[1920px]">
+        {/* Card do CTA: Substituído o 'lg:px-70' por uma escala real (lg, xl, 2xl) e ajustado o padding vertical */}
+        <div className="relative isolate overflow-hidden border border-[#17231B]/5 bg-gradient-to-br from-[#F2F2F2] to-[#E5E5E5] px-6 py-12 shadow-xl dark:border-[#F2F2F2]/5 dark:from-[#111A14] dark:to-[#16221A] sm:px-16 sm:py-16 lg:grid lg:grid-cols-2 lg:gap-x-12 lg:px-12 lg:py-20 xl:px-24 2xl:px-32">
           
           {/* Luz de fundo interna do card */}
           {!reduceMotion && (
             <motion.div aria-hidden="true" animate={{ opacity: [0.15, 0.35, 0.15] }} transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }} className="pointer-events-none absolute -left-20 -top-20 -z-10 h-72 w-72 rounded-full bg-[#A3B18A]/40 blur-[70px]"/>
           )}
 
-          {/* Coluna de Texto */}
-          <div className="relative z-10 mx-auto max-w-lg text-center lg:mx-0 lg:max-w-xl lg:flex lg:flex-col lg:items-start lg:justify-center lg:text-left">
-            <h2 className="text-3xl font-semibold tracking-tight text-[#17231B] dark:text-[#F2F2F2] sm:text-4xl lg:text-5xl lg:leading-[1.1]">Pronto para ver seus dados com clareza?</h2>
+          {/* Coluna de Texto: Limites de largura adaptados para telas maiores (xl:max-w-2xl) */}
+          <div className="relative z-10 mx-auto max-w-lg text-center lg:mx-0 lg:max-w-xl xl:max-w-2xl lg:flex lg:flex-col lg:items-start lg:justify-center lg:text-left">
+            <h2 className="text-3xl font-semibold tracking-tight text-[#17231B] dark:text-[#F2F2F2] sm:text-4xl lg:text-5xl lg:leading-[1.1]">
+              Pronto para ver seus dados com clareza?
+            </h2>
 
-            <p className="mt-5 text-base leading-relaxed text-[#465348] dark:text-[#DADFD7]/85">Escolha um plano e comece hoje, ou fale com a nossa equipe para tirar suas dúvidas.</p>
+            <p className="mt-5 text-base leading-relaxed text-[#465348] dark:text-[#DADFD7]/85 sm:text-lg">
+              Escolha um plano e comece hoje, ou fale com a nossa equipe para tirar suas dúvidas.
+            </p>
 
-            {/* Container dos Botões usando o novo padrão do Next.js e escala via Tailwind */}
+            {/* Container dos Botões */}
             <div className="mt-8 flex w-full flex-col items-center justify-center gap-4 sm:w-auto sm:flex-row lg:justify-start">
               
               {/* Botão Primário */}
@@ -40,14 +45,19 @@ export default function CtaSobre() {
             </div>
           </div>
 
-          {/* Coluna da Imagem */}
-          <div className="relative mt-16 h-64 overflow-hidden rounded-2xl sm:h-80 lg:mt-0 lg:h-auto lg:overflow-visible">
+          {/* Coluna da Imagem: Altura fluida no desktop para não empurrar os itens */}
+          <div className="relative mt-12 h-64 w-full overflow-hidden rounded-2xl sm:mt-16 sm:h-80 lg:mt-0 lg:h-full lg:overflow-visible">
             <motion.div
-              className="absolute inset-0 flex items-center justify-center lg:left-8 lg:justify-start"
+              className="absolute inset-0 flex items-center justify-center lg:left-4 xl:left-8 lg:justify-start"
               animate={reduceMotion ? {} : { y: [0, -10, 0] }}
               transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
             >
-              <img src="/areapublica_pagina_sobre_nos_computador.png" alt="Plataforma Visora" className="h-full w-auto object-contain object-center lg:absolute lg:top-1/2 lg:w-[850px] lg:-translate-y-1/2"/>
+              {/* Imagem escalonada progressivamente (550px no notebook, 700px no monitor comum, 850px no PC grande) */}
+              <img 
+                src="/areapublica_pagina_sobre_nos_computador.png" 
+                alt="Plataforma Visora" 
+                className="h-full w-auto object-contain object-center lg:absolute lg:top-1/2 lg:w-[550px] xl:w-[700px] 2xl:w-[850px] lg:-translate-y-1/2"
+              />
             </motion.div>
           </div>
         </div>
