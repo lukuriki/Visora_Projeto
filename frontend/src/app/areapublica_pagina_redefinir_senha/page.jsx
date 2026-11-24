@@ -45,7 +45,6 @@ function Conteudo() {
   const [salvou, setSalvou] = useState(false);
 
   
-  GERAR NOVA SENHA
   
 
   async function gerarSenha() {
@@ -71,7 +70,6 @@ function Conteudo() {
         );
       }
 
-      O backend retorna "novaSenha".
       const senhaGerada = dados?.novaSenha;
 
       if (
@@ -101,9 +99,6 @@ function Conteudo() {
       setCarregando(false);
     }
   }
-
-  
-  COPIAR CREDENCIAIS
   
 
   async function copiarTexto(texto, campo) {
