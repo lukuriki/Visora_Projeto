@@ -14,7 +14,7 @@ ENV NEXT_PUBLIC_API_URL=$NEXT_PUBLIC_API_URL
 
 COPY --from=dependencies /app/node_modules ./node_modules
 COPY . .
-RUN npm run build
+RUN NODE_ENV=production npm run build
 
 FROM node:24-alpine AS runtime
 
