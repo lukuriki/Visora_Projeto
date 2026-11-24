@@ -3,7 +3,7 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { Moon, Sun } from "lucide-react";
 
-import { useTheme } from "@/components/themeProvider";
+import { useTheme } from "@/components/ThemeProvider";
 
 export default function ThemeToggle() {
   const { darkMode: escuro, toggleTheme } = useTheme();

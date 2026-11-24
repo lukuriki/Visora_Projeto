@@ -1,5 +1,5 @@
 
-import { consultarEmpresaContabil, atualizarEmpresaContabil, buscarIndicadoresContabeis, listarCategoriasContabeis, criarCategoriaContabil, listarMovimentacoesContabeis, buscarMovimentacaoContabilPorId, criarMovimentacaoContabil, atualizarMovimentacaoContabil, excluirMovimentacaoContabil, listarPessoasContabeis, buscarPessoaContabilPorId, criarPessoaContabil, atualizarPessoaContabil, excluirPessoaContabil } from "../services/informacoescontabeisService.js";
+import { consultarEmpresaContabil, atualizarEmpresaContabil, buscarIndicadoresContabeis, listarCategoriasContabeis, criarCategoriaContabil, listarMovimentacoesContabeis, buscarMovimentacaoContabilPorId, criarMovimentacaoContabil, atualizarMovimentacaoContabil, excluirMovimentacaoContabil, listarPessoasContabeis, buscarPessoaContabilPorId, criarPessoaContabil, atualizarPessoaContabil, excluirPessoaContabil } from "../services/informacoesContabeisService.js";
 
 export async function consultarEmpresaContabilController(req, res, next) {
   try {
