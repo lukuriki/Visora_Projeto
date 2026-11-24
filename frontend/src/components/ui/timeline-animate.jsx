@@ -10,7 +10,6 @@ import {
 
 import { cn } from "@/lib/utils";
 
-Distância do conteúdo em relação ao marcador
 const CONTENT_LIFT = 10;
 const LINE_GAP = 28;
 
