@@ -5,7 +5,7 @@ services:
     restart: unless-stopped
     environment:
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-root_password}
-      MYSQL_DATABASE: ${MYSQL_DATABASE:-app_db}
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-visora_db}
       MYSQL_USER: ${MYSQL_USER:-app_user}
       MYSQL_PASSWORD: ${MYSQL_PASSWORD:-app_password}
     volumes:
@@ -28,14 +28,34 @@ services:
     environment:
       PORT: ${BACKEND_PORT:-8080}
       NODE_ENV: production
-      FRONTEND_URL: ${FRONTEND_URL:-http://localhost:3000}
+      FRONTEND_URL: ${FRONTEND_URL:-http://visora.10.189.87.231.sslip.io}
       DB_HOST: ${DB_HOST:-database}
       DB_PORT: ${DB_PORT:-3306}
       DB_USER: ${DB_USER:-app_user}
       DB_PASSWORD: ${DB_PASSWORD:-app_password}
-      DB_NAME: ${DB_NAME:-app_db}
+      DB_NAME: ${DB_NAME:-visora_db}
+      JWT_SECRET: ${JWT_SECRET}
+      PAGAMENTO_MODO: ${PAGAMENTO_MODO:-asaas}
       ASAAS_API_KEY: ${ASAAS_API_KEY}
       ASAAS_API_URL: ${ASAAS_API_URL:-https://api-sandbox.asaas.com/v3}
+      ASAAS_WEBHOOK_TOKEN: ${ASAAS_WEBHOOK_TOKEN}
+      SMTP_HOST: ${SMTP_HOST}
+      SMTP_PORT: ${SMTP_PORT:-465}
+      SMTP_USER: ${SMTP_USER}
+      SMTP_PASSWORD: ${SMTP_PASSWORD}
+      EMAIL_FROM: ${EMAIL_FROM}
+      IMAP_HOST: ${IMAP_HOST}
+      IMAP_PORT: ${IMAP_PORT:-993}
+      IMAP_USER: ${IMAP_USER}
+      IMAP_PASSWORD: ${IMAP_PASSWORD}
+      GEMINI_API_KEY: ${GEMINI_API_KEY}
+      GEMINI_MODEL: ${GEMINI_MODEL:-gemini-3.8-flash}
+      ADMIN_01_PASSWORD: ${ADMIN_01_PASSWORD}
+      ADMIN_02_PASSWORD: ${ADMIN_02_PASSWORD}
+      ADMIN_03_PASSWORD: ${ADMIN_03_PASSWORD}
+      ADMIN_04_PASSWORD: ${ADMIN_04_PASSWORD}
+      ADMIN_05_PASSWORD: ${ADMIN_05_PASSWORD}
+      ADMIN_06_PASSWORD: ${ADMIN_06_PASSWORD}
     expose:
       - "${BACKEND_PORT:-8080}"
 
